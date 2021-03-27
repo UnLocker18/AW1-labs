@@ -69,12 +69,13 @@ function TaskList() {
             return;
         }
 
+        /* Debug
         console.log(`${tmpList}`);
         console.log(typeof(tmpList[0].deadline));
-        console.log(typeof(tmpList[1].deadline));
+        console.log(typeof(tmpList[1].deadline)); */
 
         tmpList.sort( (a, b) => { 
-            if ((a.deadline != undefined) && (b.deadline != undefined)) {
+            if ((a.deadline) && (b.deadline)) {
                 return dayjs(a.deadline).diff(b.deadline);
             } else if (!a.deadline) {
                 return 1;
