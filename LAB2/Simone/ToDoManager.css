@@ -1,0 +1,27 @@
+.bg_green{
+    background-color: green;
+}
+
+.bg_grey{
+    background-color:darkgray;
+}
+
+.size_2{
+    font-size: 2rem;
+}
+
+.size_3{
+    font-size: 3rem;
+}
+
+.c_white{
+    color: white;
+}
+
+.c_green{
+    color: green;
+}
+
+.c_black{
+    color: black;
+}
