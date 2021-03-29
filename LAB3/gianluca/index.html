@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AW1 - Lab2</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="style.css">
+
+    <script defer src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.4/dayjs.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.4/plugin/isToday.min.js" integrity="sha512-exrxoGmlf7ScLlRwB9EqkQDttsaXGoa9sMdsmnd9D812US2lZhlmK6PDt1BtckVlK91pkSL7fif1Z5SuZ7HNqw==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.4/plugin/isBetween.min.js" integrity="sha512-nmMfLHPXFHUlBJ8i7pPVMkqK+Up7B/hr/5uVDPyweIs6Gjsb+oC8B1mycv8WgNh1PzOLoXJKtczE+LZLXB+EEA==" crossorigin="anonymous"></script>
+
+    <script defer src="constructors.js"></script>
+    <script defer src="data.js"></script>
+    <script defer src="script.js"></script>
+</head>
+<body class="d-flex flex-column height-100">
+    <nav class="navbar navbar-expand-lg navbar-light bg-success">
+        <div class="container-fluid">
+          <button class="navbar-toggler text-light border border-light" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="text-light bi bi-list"></span>
+          </button>
+          <a class="navbar-brand text-light d-flex align-items-center" href="#"><i class="bi bi-check2-all font-2 mr-2 text-light"></i>ToDo Manager</a>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">            
+            <form class="d-flex mx-auto">
+              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+              <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+          </div>
+          <i class="bi bi-person-circle font-2 transparent-white"></i>
+        </div>
+    </nav>
+    <div class="container-fluid d-flex flex-lg-grow-1 flex-wrap m-0 p-0">
+      <aside class="col-lg-4 bg-light pt-3 collapse d-lg-block" id="navbarCollapse">
+        <div id="taskFilter" class="list-group rounded-0 z-index-max position-inherit" role="tablist">
+          <a class="list-group-item list-group-item-action list-group-item-success active bg-success border-success" id="list-all-list" data-toggle="list" href="#list-all" role="tab" aria-controls="all">All</a>
+          <a class="list-group-item list-group-item-action" id="list-important-list" data-toggle="list" href="#list-important" role="tab" aria-controls="important">Important</a>
+          <a class="list-group-item list-group-item-action" id="list-today-list" data-toggle="list" href="#list-today" role="tab" aria-controls="today">Today</a>
+          <a class="list-group-item list-group-item-action" id="list-next7-list" data-toggle="list" href="#list-next7" role="tab" aria-controls="next7">Next 7 days</a>
+          <a class="list-group-item list-group-item-action" id="list-private-list" data-toggle="list" href="#list-private" role="tab" aria-controls="private">Private</a>
+        </div>
+      </aside>
+      <main class="d-flex flex-column col-lg-8 pt-3">
+          <h1 id="filterTitle">All</h1>
+          <ul id="taskList" class="list-group list-group-flush margin-b-75">
+
+          </ul>
+            <div class="d-flex justify-content-between m-4 fixed-bottom">
+              <div></div>
+              <i class="bi bi-plus-circle-fill text-success font-4"></i>
+            </div>              
+      </main>
+    </div>
+</body>
+</html>
