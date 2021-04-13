@@ -1,0 +1,25 @@
+html {
+    height: 100vh;
+}
+
+.full-height {
+    min-height: calc(100vh - 60px);
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .active-success {
+    background-color: #28A745;
+}
+
+.plus-btn {
+    color: #28A745;
+}
+
+.plus-btn:hover {
+    color: #24963e;
+}
+
+.bottom-right {
+    position: absolute;
+    right: 0;
+    bottom: 0;    
+}

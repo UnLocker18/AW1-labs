@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="./style.css">
+
+    <!-- Bootstrap -->
+    <script defer src="https://code.jquery.com/jquery-3.5.1.slim.min.js" 
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" 
+        crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" 
+        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" 
+        crossorigin="anonymous"></script>
+
+    <!-- Dayjs -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.4/dayjs.min.js" 
+        integrity="gtpWvEgskxcEpGzpHMvoZP/GatSRkCbh0kBpCVOWI2tTYx1M+uh7tkg6dfRXBl8I" 
+        crossorigin="anonymous"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.4/plugin/isToday.js" 
+        integrity="OLBgp1GsljhM2TJ+sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l+9Ua0vFImLlb" 
+        crossorigin="anonymous"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.4/plugin/isBetween.js" 
+        integrity="UdmzmgjA0xrY9uomeWH89UP0nOVb5aKuIH/uVMw3zKnNTrzd8WaHSdyhdJ+NpjEk" 
+        crossorigin="anonymous"></script>
+    <!-- <script>dayjs.extend(window.dayjs_plugin_isToday)</script> -->
+    
+    <!-- My script -->
+    <script defer src="taskList.js"></script>
+
+    <title>Task Manager</title>
+</head>
+<body>
+    <div class="container-fluid p-0 h-100">
+        <div class="row no-gutters">
+            <header class="col-12 p-0">
+                <nav class="navbar navbar-expand-md navbar-dark bg-success d-flex justify-content-between">
+                    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#taskFilterMenu" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <!-- Brand -->
+                    <a href="" class="navbar-brand">
+                        <h3 class="mb-0"><i class="bi bi-patch-check"></i> Task Manager</h3>
+                    </a>
+                    <!-- Search box -->
+                    <div class="collapse navbar-collapse col-4">
+                        <form class="form-inline">
+                            <input type="search" class="form-control mr-sm-2" placeholder="Search" aria-label="Search">
+                        </form>
+                    </div>
+                    <!-- User Icon -->
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <h2 class="mb-0"><a href="#"><i class="bi bi-person-circle text-light"></a></i></h2>
+                        </li>
+                    </ul>
+                </nav>
+                            
+            </header>
+        </div>
+        <div class="row no-gutters full-height">
+            <!-- Filters -->
+            <aside class="collapse col-md-4 align-self-stretch d-md-block bg-light mh-100 p-3" id="taskFilterMenu">
+                <nav class="nav nav-pills flex-column">
+                    <a class="nav-link rounded-0 border-top text-dark active-success active"
+                        id="All"
+                        href="#"
+                        aria-current="page"
+                        data-toggle="pill">All</a>
+                    <a class="nav-link rounded-0 border-top text-dark"
+                        id="Important"
+                        href="#"
+                        data-toggle="pill">Important</a>
+                    <a class="nav-link rounded-0 border-top text-dark"
+                        id="Today"
+                        href="#"
+                        data-toggle="pill">Today</a>
+                    <a class="nav-link rounded-0 border-top text-dark"
+                        id="7Days"
+                        href="#"
+                        data-toggle="pill">Next 7 Days</a>
+                    <a class="nav-link rounded-0 border-top text-dark"
+                        id="Private"
+                        href="#"
+                        data-toggle="pill">Private</a>
+                </nav>
+            </aside>
+            <article class="col-md-8 my-3 px-3">
+                <h1>All</h1>
+                <!-- Task List-->
+                <ul class="list-group list-group-flush" id="TaskList">
+                    <!-- <li class="list-group-item d-flex justify-content-between">
+                        <div class="custom-control custom-checkbox d-inline col-4">
+                            <input type="checkbox" class="custom-control-input" id="customCheckTsk">
+                            <label for="customCheckTsk" class="custom-control-label">
+                                Computer Lab 2
+                            </label>
+                        </div>
+                        <span class="col-4 text-center"><i class="bi bi-people-fill"></i></span>
+                        <span class="col-4 text-right">Monday 22 March 2021 at 14:30</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <div class="custom-control custom-checkbox d-inline col-4">
+                            <input type="checkbox" class="custom-control-input" value="" id="customCheckTsk2">
+                            <label for="customCheckTsk2" class="custom-control-label">
+                                Buy Groceries
+                            </label>
+                        </div>
+                        <span class="col-4 text-center"><i class="bi bi-people-fill"></i></span>
+                        <span class="col-4 text-right"></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <div class="custom-control custom-checkbox d-inline col-4">
+                            <input type="checkbox" class="custom-control-input" value="" id="customCheckTsk3">
+                            <label for="customCheckTsk3" class="custom-control-label">
+                                <strong class="text-danger">Review React</strong>
+                            </label>
+                        </div>
+                        <span class="col-4 text-center"></span>
+                        <span class="col-4 text-right">Today at 16:40</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <div class="custom-control custom-checkbox d-inline col-4">
+                            <input type="checkbox" class="custom-control-input" value="" id="customCheckTsk4">
+                            <label for="customCheckTsk4" class="custom-control-label">
+                                Cook Dinner
+                            </label>
+                        </div>
+                        <span class="col-4 text-center"><i class="bi bi-people-fill"></i></span>
+                        <span class="col-4 text-right"></span>
+                    </li> -->
+                </ul>
+                <!-- Add Button -->
+                <!-- <span class="d-flex flex-row-reverse fixed-bottom m-3"> -->
+                    <a href="#" class="plus-btn bottom-right m-3" id="plusBtn" role="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z"/>
+                        </svg>
+                    </a>
+                <!-- </span> -->
+            </article>
+        </div>
+            
+    </div>
+    
+    
+</body>
+</html>
