@@ -1,0 +1,21 @@
+.nav-pills .nav-link.active, .nav-pills .show > .active-success {
+  background-color: #28A745;
+}
+
+.full-height {
+  min-height: calc(100vh - 64px);
+}
+
+.bottom-right {
+  position: absolute;
+  right: 0;
+  bottom: 0;    
+}
+
+.add-btn {
+  color: #28a745;
+}
+
+.add-btn:hover {
+  color: #24963e;
+}
