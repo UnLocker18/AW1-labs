@@ -7,3 +7,6 @@
 .margin-b-75 {
   margin-bottom: 7.5rem;
 }
+.min-width-5 {
+  min-width: 5rem !important;
+}
