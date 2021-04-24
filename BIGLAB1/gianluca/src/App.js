@@ -11,7 +11,7 @@ import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
 
 function Aside() {
-  return <Col as="aside" lg={4} className="bg-light py-3"><FilterList /></Col>;
+  return <Col as="aside" lg={4} className="collapse d-lg-block bg-light py-3"><FilterList /></Col>;
 }
 
 function Main() {

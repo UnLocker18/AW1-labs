@@ -10,17 +10,19 @@ import Check2All from 'react-bootstrap-icons/dist/icons/check2-all';
 function MainNav() {
     return (
         <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-            <Container fluid className="my-1">
-                <Navbar.Brand className="d-flex align-items-center" href="#home">
+            <Container fluid className="my-1 mx-auto">
+                <Navbar.Toggle aria-controls="" />
+                <Navbar.Brand className="d-flex align-items-center justify-content-between" href="#home">
                     <Check2All color="white" size={36} className="mr-2" />
                     <h4>ToDO Manager</h4>
                 </Navbar.Brand>
-                <Navbar.Collapse>
-                    <Form inline className="mx-auto">
-                        <FormControl type="text" placeholder="Search" className="mr-sm-2" />
-                        <Button variant="outline-info">Search</Button>
-                    </Form>
-                </Navbar.Collapse>
+                <Form inline className="collapse d-lg-block mx-auto">
+                    <FormControl type="text" placeholder="Search" className="mr-sm-2" />
+                    <Button variant="outline-info">Search</Button>
+                </Form>
+                {/* <Navbar.Collapse>
+                    
+                </Navbar.Collapse> */}
                 <PersonCircle color="white" size={32} />
             </Container>
         </Navbar>
