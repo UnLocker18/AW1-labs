@@ -3,7 +3,7 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Dropdown from 'react-bootstrap/Dropdown';
 
-import PersonSquare from 'react-bootstrap-icons/dist/icons/person-square';
+import PeopleFill from 'react-bootstrap-icons/dist/icons/people-fill';
 import ThreeDotsVertical from 'react-bootstrap-icons/dist/icons/three-dots-vertical';
 import Trash2Fill from 'react-bootstrap-icons/dist/icons/trash2-fill';
 import PencilSquare from 'react-bootstrap-icons/dist/icons/pencil-square';
@@ -15,7 +15,7 @@ import React, {useState} from 'react';
 function Task(props) {
     return (
         <ListGroup.Item className="d-flex align-items-center">
-            <Col as="span" className={props.isUrgent && "text-danger"}>
+            <Col as="span" className={props.isUrgent && "text-danger font-weight-bold"}>
                 <Form.Check
                     custom
                     type="checkbox"
@@ -23,8 +23,8 @@ function Task(props) {
                     label={props.description}
                 />
             </Col>
-            <Col as="span" className="text-dark text-center">{props.isPrivate && <PersonSquare />}</Col>
-            <Col as="span" className="font-075 text-right">{props.date}<TaskControls /></Col>
+            <Col as="span" className="text-dark text-center">{props.isPrivate && <PeopleFill />}</Col>
+            <Col as="span" className="font-075 text-right d-flex justify-content-end"><span>{props.date}</span><TaskControls /></Col>
         </ListGroup.Item>
     );
 }
