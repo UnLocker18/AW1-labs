@@ -10,12 +10,3 @@
 .min-width-5 {
   min-width: 5rem !important;
 }
-.cursor-pointer {
-  cursor: pointer;
-}
-.z-index-max {
-  z-index: 10000;
-}
-.hover-bg-light:hover {
-  background-color: #f8f9fa;
-}
