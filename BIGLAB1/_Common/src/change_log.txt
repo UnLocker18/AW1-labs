@@ -1,6 +1,0 @@
-aggiunto collape al menù filtri
-cambiato comportamento responsive search bar
-aggiunto bottone toggle nella navbar
-migliorata impaginazione data-tre puntini con viewport stretti
-cambiata icona shared per meglio riflettere la collaborazione di più persone
-aggiunto grassetto a testo quando task isUrgent

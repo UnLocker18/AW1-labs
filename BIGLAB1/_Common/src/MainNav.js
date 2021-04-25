@@ -6,23 +6,31 @@ import Container from 'react-bootstrap/Container';
 
 import PersonCircle from 'react-bootstrap-icons/dist/icons/person-circle';
 import Check2All from 'react-bootstrap-icons/dist/icons/check2-all';
+import List from 'react-bootstrap-icons/dist/icons/list';
 
-function MainNav() {
+function Toggle(props) {
+    return (
+        <Button onClick={() => props.toggleCollapse(wasOpen => !wasOpen)} variant="link" className='d-lg-none'>
+            <List color="white" size={32} />
+        </Button>
+    );
+}
+
+function MainNav(props) {
     return (
         <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
             <Container fluid className="my-1 mx-auto">
-                <Navbar.Toggle aria-controls="" />
+                <Toggle {...props} />
                 <Navbar.Brand className="d-flex align-items-center justify-content-between" href="#home">
                     <Check2All color="white" size={36} className="mr-2" />
                     <h4>ToDO Manager</h4>
                 </Navbar.Brand>
-                <Form inline className="collapse d-lg-block mx-auto">
-                    <FormControl type="text" placeholder="Search" className="mr-sm-2" />
-                    <Button variant="outline-info">Search</Button>
-                </Form>
-                {/* <Navbar.Collapse>
-                    
-                </Navbar.Collapse> */}
+                <Navbar.Collapse>
+                    <Form inline className="mx-auto">
+                        <FormControl type="text" placeholder="Search" className="mr-sm-2" />
+                        <Button variant="outline-info">Search</Button>
+                    </Form>
+                </Navbar.Collapse>
                 <PersonCircle color="white" size={32} />
             </Container>
         </Navbar>

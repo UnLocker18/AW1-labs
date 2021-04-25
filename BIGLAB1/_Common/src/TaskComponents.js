@@ -1,3 +1,5 @@
+import dayjs from 'dayjs'
+
 import ListGroup from 'react-bootstrap/ListGroup';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
@@ -8,7 +10,7 @@ import ThreeDotsVertical from 'react-bootstrap-icons/dist/icons/three-dots-verti
 import Trash2Fill from 'react-bootstrap-icons/dist/icons/trash2-fill';
 import PencilSquare from 'react-bootstrap-icons/dist/icons/pencil-square';
 
-import { tasks } from './data';
+import { tl } from './data';
 
 import React, {useState} from 'react';
 
@@ -24,12 +26,12 @@ function Task(props) {
                 />
             </Col>
             <Col as="span" className="text-dark text-center">{props.isPrivate && <PeopleFill />}</Col>
-            <Col as="span" className="font-075 text-right d-flex justify-content-end"><span>{props.date}</span><TaskControls /></Col>
+            <Col as="span" className="font-075 text-right d-flex justify-content-end"><span>{props.date}</span><TaskControls taskID={props.id} deleteTask={props.deleteTask} /></Col>
         </ListGroup.Item>
     );
 }
 
-function TaskControls() {
+function TaskControls(props) {
     const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
         <a
             href=""
@@ -64,7 +66,7 @@ function TaskControls() {
                     </ul>
                 </div>
             );
-        },
+        }, 
     );
     return (
         <Dropdown className="d-inline ml-2">
@@ -73,20 +75,50 @@ function TaskControls() {
             </Dropdown.Toggle>
 
             <Dropdown.Menu className="min-width-5" as={CustomMenu}>
-                <Dropdown.Item className="px-3" href="#/action-1"><PencilSquare className="mr-3" size={16}/>Edit</Dropdown.Item>
-                <Dropdown.Item className="px-3" href="#/action-2"><Trash2Fill className="mr-3" size={16}/>Delete</Dropdown.Item>
+                <Dropdown.Item className="px-3"><PencilSquare className="mr-3" size={16} />Edit</Dropdown.Item>
+                <Dropdown.Item className="px-3" onClick={() => props.deleteTask(props.taskID)}><Trash2Fill className="mr-3" size={16} />Delete</Dropdown.Item>
             </Dropdown.Menu>
         </Dropdown>
     );
 }
 
-function TaskList() {
-    const taskList = tasks.map(task => <Task key={task.id} {...task} />);
+function TaskList(props) {
+    const [tasks, setTasks] = useState([...props.tl]);
+    let newList = applyFilter(props.activeFilter, tasks);
+
+    const deleteTask = (tskID) => {
+        setTasks( tsks => tsks.filter( t => t.id != tskID ) );
+    }
+
+    const taskList = [...newList].map(task => <Task key={task.id} {...task} deleteTask={deleteTask} />);
     return (
         <ListGroup variant="flush" className="margin-b-75">
             {taskList}
         </ListGroup>
     );
+}
+
+const applyFilter = (selected, list) => {
+    switch(selected){
+        case 1:
+            return list;
+        case 2:
+            return (list.filter( task => task.isUrgent ));
+        case 3:
+            return (list.filter( task => {
+                if (dayjs(task.date).format("YYYY-MM-DD") === dayjs().format("YYYY-MM-DD") ) return true;
+                else return false;
+            }));
+        case 4:
+            return (list.filter( task => {
+                if (dayjs(task.date).isAfter( dayjs().add(7, 'day') )) return true;
+                else return false;
+            }));
+        case 5:
+            return (list.filter( task => task.isPrivate ));
+        default:
+            return list;
+    }
 }
 
 export default TaskList;

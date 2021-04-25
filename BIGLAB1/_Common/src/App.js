@@ -9,15 +9,53 @@ import PlusCircleFill from 'react-bootstrap-icons/dist/icons/plus-circle-fill';
 
 import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
+import Collapse from 'react-bootstrap/Collapse';
 
-function Aside() {
-  return <Col as="aside" lg={4} className="collapse d-lg-block bg-light py-3"><FilterList /></Col>;
+import React, {useState} from 'react';
+
+import {filters, tl} from './data';
+
+function App() {
+  const [open, setOpen] = useState(true);
+
+  return (
+    <Container fluid className="d-flex flex-column height-100 m-0 p-0">
+      <MainNav toggleCollapse={isOpen => setOpen(isOpen)} />
+      <Content isOpen={open} />
+    </Container>
+  );
 }
 
-function Main() {
+function Content(props) {
+  const [chosenFilter, setChosenFilter] = useState(1);
+
+  return(
+    <Container fluid className="d-flex flex-lg-grow-1 flex-wrap m-0 p-0">
+      <Aside chooseFilter={(filterID) => setChosenFilter(filterID)} isOpen={props.isOpen} />
+      <Main activeFilter={chosenFilter} />
+    </Container>
+  );
+}
+
+function Aside(props) {
+  const { width } = useViewport();
+  const breakpoint = 992;
+
+  const show = (width > breakpoint);
+
+  return ( 
+    <Collapse in={props.isOpen}>
+      <Col as="aside" lg={4} xs={12} className={show ? "show bg-light py-3" : "bg-light py-3"}>
+        <FilterList chooseFilter={props.chooseFilter} id="filter-list"/>
+      </Col>
+    </Collapse>
+  );
+}
+
+function Main(props) {
   return (
-    <Col as="main" lg={8} className="py-3"><h1>All</h1>
-      <TaskList />
+    <Col as="main" lg={8} className="py-3"><h1>{filters[props.activeFilter - 1].text}</h1>
+      <TaskList tl={tl} activeFilter={props.activeFilter}/>
       <Container fluid className="fixed-bottom d-flex justify-content-between px-4 mb-4">
         <div />
         <PlusCircleFill color="#17a2b8" size={64} />
@@ -26,16 +64,16 @@ function Main() {
   );
 }
 
-function App() {
-  return (
-    <Container fluid className="d-flex flex-column height-100 m-0 p-0">
-      <MainNav />
-      <Container fluid className="d-flex flex-lg-grow-1 flex-wrap m-0 p-0">
-        <Aside />
-        <Main />
-      </Container>
-    </Container>
-  );
+const useViewport = () => {
+  const [width, setWidth] = useState(window.innerWidth);
+
+  React.useEffect( () => {
+    const handleWindowResize = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", handleWindowResize);
+    return () => window.removeEventListener("resize", handleWindowResize);
+  }, [] );
+
+  return { width };
 }
 
 export default App;
