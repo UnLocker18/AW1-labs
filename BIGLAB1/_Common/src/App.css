@@ -12,7 +12,8 @@
 }
 .nav-pills .nav-link.active, .nav-pills .show > .active-success {
   background-color: #17a2b8;
+  color: white !important; 
 }
 .hover-bg-light:hover {
-  background-color: #f8f9fa;
+  background-color: #17a2b808;
 }
