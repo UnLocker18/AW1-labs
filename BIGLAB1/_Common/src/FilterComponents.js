@@ -15,7 +15,7 @@ function Filter(props) {
 function FilterList(props) {
     const filterList = filters.map( filter => <Filter key={filter.id} chooseFilter={props.chooseFilter} {...filter} />)
     return (
-        <Nav variant="pills" className="flex-column" defaultActiveKey="1" chooseFilter={props.chooseFilter} id="filter-list">
+        <Nav variant="pills" className="flex-column" defaultActiveKey="1" id="filter-list">
             {filterList}
         </Nav>
     );

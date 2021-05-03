@@ -7,8 +7,14 @@
 .margin-b-75 {
   margin-bottom: 7.5rem;
 }
+.margin-l-14 {
+  margin-left: 1.4rem;
+}
 .min-width-5 {
   min-width: 5rem !important;
+}
+span > .max-width-5 {
+  max-width: 5rem !important;
 }
 .nav-pills .nav-link.active, .nav-pills .show > .active-success {
   background-color: #17a2b8;
@@ -16,4 +22,43 @@
 }
 .hover-bg-light:hover {
   background-color: #17a2b808;
+}
+.hover-scaleup {
+  transition: all .15s ease-in-out;
+}
+.hover-scaleup:hover {  
+  transform: scale(1.18);
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+.custom-is-invalid {
+  display: block !important;
+}
+.custom-invalid-feedback {
+  display: none;
+  width: 100%;
+  margin-top: .25rem;
+  font-size: 80%;
+  color: #dc3545;
+}
+
+.edit-animation {
+  animation-name: padding-top-bottom;
+  animation-duration: .15s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+@keyframes padding-top-bottom {
+  from {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  to {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
 }
