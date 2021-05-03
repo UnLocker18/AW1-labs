@@ -1,11 +1,10 @@
-import { Collapse } from 'bootstrap';
-import {Modal, Form, Col, ListGroup, Button, InputGroup} from 'react-bootstrap';
+import {Modal, Form, Col, ListGroup, Button} from 'react-bootstrap';
 import {PlusCircleFill, Check, X, Clock, Calendar} from 'react-bootstrap-icons';
 
 import TimeField from 'react-simple-timefield';
 
 function TaskAdder(props) {
-    const { show, handleShow, handleClose, clearForm, ...propsObj } = props;    
+    const { show, handleShow, handleClose, clearForm, ...propsObj } = props;
 
     return (
         <>

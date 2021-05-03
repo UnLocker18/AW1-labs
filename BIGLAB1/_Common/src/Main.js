@@ -12,7 +12,7 @@ import React, { useState } from 'react';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
-//dayjs.tz.setDefault(dayjs.tz.guess())
+dayjs.tz.setDefault(dayjs.tz.guess());
 
 function Main(props) {
     const [tasks, setTasks] = useState([...tl]);
