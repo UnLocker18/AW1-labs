@@ -1,19 +1,13 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
-import TaskList from './TaskComponents';
+import Main from './Main';
 import FilterList from './FilterComponents';
 import MainNav from './MainNav'
 
-import PlusCircleFill from 'react-bootstrap-icons/dist/icons/plus-circle-fill';
-
-import Container from 'react-bootstrap/Container';
-import Col from 'react-bootstrap/Col';
-import Collapse from 'react-bootstrap/Collapse';
+import {Container, Col, Collapse} from 'react-bootstrap';
 
 import React, {useState} from 'react';
-
-import {filters, tl} from './data';
 
 function App() {
   const [open, setOpen] = useState(true);
@@ -29,38 +23,26 @@ function App() {
 function Content(props) {
   const [chosenFilter, setChosenFilter] = useState(1);
 
+  const { width } = useViewport();
+  const breakpoint = 992;
+
+  const lg = (width > breakpoint);
+
   return(
     <Container fluid className="d-flex flex-lg-grow-1 flex-wrap m-0 p-0">
-      <Aside chooseFilter={(filterID) => setChosenFilter(filterID)} isOpen={props.isOpen} />
-      <Main activeFilter={chosenFilter} />
+      <Aside lg={lg} chooseFilter={(filterID) => setChosenFilter(filterID)} isOpen={props.isOpen} />
+      <Main lg={lg} activeFilter={chosenFilter} />
     </Container>
   );
 }
 
 function Aside(props) {
-  const { width } = useViewport();
-  const breakpoint = 992;
-
-  const show = (width > breakpoint);
-
   return ( 
     <Collapse in={props.isOpen}>
-      <Col as="aside" lg={4} xs={12} className={show ? "show bg-light py-3" : "bg-light py-3"}>
+      <Col as="aside" lg={4} xs={12} className={props.lg ? "show bg-light py-3" : "bg-light py-3"}>
         <FilterList chooseFilter={props.chooseFilter} id="filter-list"/>
       </Col>
     </Collapse>
-  );
-}
-
-function Main(props) {
-  return (
-    <Col as="main" lg={8} className="py-3"><h1>{filters[props.activeFilter - 1].text}</h1>
-      <TaskList tl={tl} activeFilter={props.activeFilter}/>
-      <Container fluid className="fixed-bottom d-flex justify-content-between px-4 mb-4">
-        <div />
-        <PlusCircleFill color="#17a2b8" size={64} />
-      </Container>
-    </Col>
   );
 }
 
