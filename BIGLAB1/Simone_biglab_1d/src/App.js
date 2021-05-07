@@ -28,7 +28,9 @@ function App() {
 
 function Content(props) {
   const location = useLocation();
-  const filterId = filters.filter( filter => filter.url === location.pathname)[0].id;
+  const filter = filters.filter( filter => filter.url === location.pathname);
+  let filterId = 1
+  if(filterId.length===0) filterId=filter[0].id;
 
   const [chosenFilter, setChosenFilter] = useState(location.state ? location.state.id : filterId);
 
@@ -55,8 +57,7 @@ function Aside(props) {
           <Route exact path="/today" render={ () => <FilterList chooseFilter={props.chooseFilter} id="filter-list" /> }  />
           <Route exact path="/after7days" render={ () => <FilterList chooseFilter={props.chooseFilter} id="filter-list" /> }  />
           <Route exact path="/private" render={ () => <FilterList chooseFilter={props.chooseFilter} id="filter-list" /> }  />
-          {/* <Route exact path=":url" render={ ({match}) => { <FilterList chooseFilter={props.chooseFilter} id="filter-list" /> } } /> */}
-          <Route exact path="/" render={ () => <Redirect to="/all" /> } />
+          <Route path="/" render={ () => <Redirect to="/all" /> } />
         </Switch> 
       </Col>
     </Collapse>
