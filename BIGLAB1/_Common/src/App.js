@@ -8,20 +8,32 @@ import MainNav from './MainNav'
 import {Container, Col, Collapse} from 'react-bootstrap';
 
 import React, {useState} from 'react';
+import {BrowserRouter as Router, Route, Switch, Redirect} from "react-router-dom"
 
 function App() {
   const [open, setOpen] = useState(true);
 
   return (
-    <Container fluid className="d-flex flex-column height-100 m-0 p-0">
-      <MainNav toggleCollapse={isOpen => setOpen(isOpen)} />
-      <Content isOpen={open} />
-    </Container>
+    <Router>
+      <Container fluid className="d-flex flex-column height-100 m-0 p-0">
+        <MainNav toggleCollapse={isOpen => setOpen(isOpen)} />
+        <Switch>
+          <Route exact path = "/all" render={({match}) => <Content isOpen = {open} url = {match.path}/>}/>
+          <Route exact path = "/important" render={({match}) => <Content isOpen = {open} url = {match.path}/>}/>
+          <Route exact path = "/today" render={({match}) => <Content isOpen = {open} url = {match.path}/>}/>
+          <Route exact path = "/next_week" render={({match}) => <Content isOpen = {open} url = {match.path}/>}/>
+          <Route exact path = "/private" render={({match}) => <Content isOpen = {open} url = {match.path}/>}/>
+          <Route><Redirect to = "/all"/></Route>
+        </Switch>
+      </Container>    
+    </Router>
   );
 }
 
 function Content(props) {
-  const [chosenFilter, setChosenFilter] = useState(1);
+  const [chosenFilter, setChosenFilter] = useState(props.url);
+
+  //console.log(chosenFilter)
 
   const { width } = useViewport();
   const breakpoint = 992;
@@ -30,8 +42,8 @@ function Content(props) {
 
   return(
     <Container fluid className="d-flex flex-lg-grow-1 flex-wrap m-0 p-0">
-      <Aside lg={lg} chooseFilter={(filterID) => setChosenFilter(filterID)} isOpen={props.isOpen} />
-      <Main lg={lg} activeFilter={chosenFilter} />
+      <Aside lg={lg} chooseFilter={setChosenFilter} isOpen={props.isOpen} />
+      <Main lg={lg} activeFilter={chosenFilter}/>
     </Container>
   );
 }

@@ -35,9 +35,10 @@ function Task(props) {
 
 function TaskList(props) {
     const { tasks, activeFilter, ...propsObj } = props;
-    let newList = applyFilter(activeFilter, tasks);
 
-    const taskList = newList.map(task => <Task key={task.id} task={task} {...propsObj} />);
+    let newList = applyFilter(activeFilter, tasks);
+    
+    const taskList = [...newList].map(task => <Task key={task.id} task={task} {...propsObj} />);
     return (
         <ListGroup variant="flush" className="margin-b-75">
             {taskList}
@@ -103,24 +104,22 @@ function TaskControls(props) {
 }
 
 const applyFilter = (selected, list) => {
-
     switch (selected) {
-        case '/important':
+        case 2:
             return (list.filter(task => task.isUrgent));
-        case '/today':
+        case 3:
             return (list.filter(task => {
                 if (dayjs(task.date).format("YYYY-MM-DD") === dayjs().format("YYYY-MM-DD")) return true;
                 else return false;
             }));
-
-        case '/next_week':
+        case 4:
             return (list.filter(task => {
                 if (dayjs(task.date).isBetween(
                     dayjs().startOf('d').add(1, 'day').subtract(1, 'minute'), dayjs().startOf('d').add(8, 'day')
                 )) return true;
                 else return false;
             }));
-        case '/private':
+        case 5:
             return (list.filter(task => task.isPrivate));
         default:
             return list;

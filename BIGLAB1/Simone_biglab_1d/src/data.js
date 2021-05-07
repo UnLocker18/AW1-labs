@@ -1,10 +1,10 @@
 import dayjs from 'dayjs';
 
 const filters = [
-    {id: 1, text: 'All', active: true, url: '/all'},
+    {id: 1, text: 'All', active: false, url: '/all'},
     {id: 2, text: 'Important', active: false, url: '/important'},
     {id: 3, text: 'Today', active: false, url: '/today'},
-    {id: 4, text: 'Next 7 Days', active: false, url: '/next_week'},
+    {id: 4, text: 'Next 7 Days', active: false, url: '/after7days'},
     {id: 5, text: 'Private', active: false, url: '/private'},
 ];
 
