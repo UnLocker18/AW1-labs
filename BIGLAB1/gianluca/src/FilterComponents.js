@@ -1,25 +1,45 @@
-import ListGroup from 'react-bootstrap/ListGroup';
+import { Nav } from 'react-bootstrap';
 
-import { filters } from './data';
+import { NavLink } from 'react-router-dom';
 
-import { useState } from 'react';
+import {filters} from './data';
 
 function Filter(props) {
-    return <ListGroup.Item className={(props.active && "bg-info border-info") + " hover-bg-light cursor-pointer z-index-max"} 
-        active={props.active} onClick={() => props.setActiveFilter(props.id)}>{props.text}</ListGroup.Item>;
+    return (
+        <NavLink className="nav-link rounded-0 border-top text-dark hover-bg-light"
+            to={{pathname: "/filter/" + props.id, state: {activeFilter: props.id}}}
+        >
+            {props.text}
+        </NavLink>
+        /* <Nav.Link className="nav-link rounded-0 border-top text-dark hover-bg-light"
+                to={"/filter/" + props.id}
+                eventKey={props.id}
+                onSelect={() => props.chooseFilter(props.id)}>
+                {props.text}
+            </Nav.Link> */
+    );
 }
 
-function FilterList(props) {
-    const filterList = filters.map( (filter, index) => {
-        return <Filter key={index} id={index} active={props.activeFilter === index ? true : false} 
-            setActiveFilter={props.setActiveFilter} text={filter}/>;
-    });
+function FilterList() {
+    const filterList = filters.map( filter => <Filter key={filter.id} {...filter} />)
+    return (
+        <Nav variant="pills" className="flex-column" defaultActiveKey="1" id="filter-list">
+            {filterList}
+        </Nav>
+    );
+}
 
+/* function Filter(props) {
+    return <ListGroup.Item className={props.active && "bg-info border-info"} active={props.active}>{props.text}</ListGroup.Item>;
+}
+
+function FilterList() {
+    const filterList = filters.map( filter => <Filter key={filter.id} {...filter}/>)
     return (
         <ListGroup className="rounded-0">
             {filterList}
         </ListGroup>
     );
-}
+} */
 
 export default FilterList;

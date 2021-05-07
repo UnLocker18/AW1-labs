@@ -1,33 +1,50 @@
-import ListGroup from 'react-bootstrap/ListGroup';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import Dropdown from 'react-bootstrap/Dropdown';
+import dayjs from 'dayjs';
+import isBetween from 'dayjs/plugin/isBetween';
 
-import PersonSquare from 'react-bootstrap-icons/dist/icons/person-square';
-import ThreeDotsVertical from 'react-bootstrap-icons/dist/icons/three-dots-vertical';
-import Trash2Fill from 'react-bootstrap-icons/dist/icons/trash2-fill';
-import PencilSquare from 'react-bootstrap-icons/dist/icons/pencil-square';
+import {ListGroup, Col, Form, Dropdown} from 'react-bootstrap';
 
-import { tasks } from './data';
+import {PersonFill, ThreeDotsVertical, Trash2Fill, PencilSquare} from 'react-bootstrap-icons';
 
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { TaskForm } from './AdderComponents';
+
+dayjs.extend(isBetween);
 
 function Task(props) {
+    const { task, deleteTask, ...propsObj } = props;    
+
     return (
+        props.editMode === task.id ? <TaskForm {...propsObj} /> :
         <ListGroup.Item className="d-flex align-items-center">
-            <Col as="span" className={props.isUrgent && "text-danger"}>
+            <Col as="span" className={task.isUrgent && "text-danger font-weight-bold"}>
                 <Form.Check
                     custom
                     type="checkbox"
-                    id={"custom-checkbox-" + props.id}
-                    label={props.description}
+                    id={"custom-checkbox-" + task.id}
+                    label={task.description}
                 />
             </Col>
-            <Col as="span" className="text-dark text-center">{props.isPrivate && <PersonSquare />}</Col>
-            <Col as="span" className="font-075 text-right d-flex align-items-center justify-content-end">
-                {props.date}<TaskControls {...props} />
+            <Col as="span" className="text-dark text-center">{task.isPrivate && <PersonFill size={20} />}</Col>
+            <Col as="span" className="font-075 text-right d-flex justify-content-end align-items-center">
+                <span>{task.date.format("dddd D MMMM YYYY [at] H:mm")}</span>
+                <TaskControls taskID={task.id} deleteTask={deleteTask} editTask={props.editTask} />
             </Col>
         </ListGroup.Item>
+    );
+}
+
+function TaskList(props) {
+    const { tasks, activeFilter, ...propsObj } = props;
+
+    let newList = applyFilter(activeFilter, tasks);
+    
+    const taskList = [...newList].map(task => <Task key={task.id} task={task} {...propsObj} />);
+    
+    return (
+        <ListGroup variant="flush" className="margin-b-75">
+            {taskList}
+        </ListGroup>
     );
 }
 
@@ -75,40 +92,40 @@ function TaskControls(props) {
             </Dropdown.Toggle>
 
             <Dropdown.Menu className="min-width-5" as={CustomMenu}>
-                <Dropdown.Item className="px-3"><PencilSquare className="mr-3" size={16} />Edit</Dropdown.Item>
-                <Dropdown.Item className="px-3" onClick={() => props.deleteTask(props.id)}><Trash2Fill className="mr-3" size={16} />Delete</Dropdown.Item>
+                <Dropdown.Item className="px-3" onClick={() => props.editTask(props.taskID)}>
+                    <PencilSquare className="mr-3" size={16} />
+                    Edit
+                </Dropdown.Item>
+                <Dropdown.Item className="px-3" onClick={() => props.deleteTask(props.taskID)}>
+                    <Trash2Fill className="mr-3" size={16} />
+                    Delete
+                </Dropdown.Item>
             </Dropdown.Menu>
         </Dropdown>
     );
 }
 
-function TaskList(props) {
-    const [taskList, setTl] = useState(tasks);
-    const deleteTask = (delId) => setTl(taskList.filter(task => task.id !== delId));
-
-    const filteredTaskList = taskList.filter((task) => {
-        switch (props.activeFilter) {
-            case 0:
-                return true;
-            case 1:
-                return task.isUrgent;
-            case 2:
-                return true;
-            case 3:
-                return true;
-            case 4:
-                return task.isPrivate;
-        }
-    });
-
-    console.log(taskList, filteredTaskList);
-
-    const taskComponents = filteredTaskList.map(task => <Task key={task.id} deleteTask={deleteTask} {...task} />);
-    return (
-        <ListGroup variant="flush" className="margin-b-75">
-            {taskComponents}
-        </ListGroup>
-    );
+const applyFilter = (selected, list) => {
+    switch (selected) {
+        case 2:
+            return (list.filter(task => task.isUrgent));
+        case 3:
+            return (list.filter(task => {
+                if (dayjs(task.date).format("YYYY-MM-DD") === dayjs().format("YYYY-MM-DD")) return true;
+                else return false;
+            }));
+        case 4:
+            return (list.filter(task => {
+                if (dayjs(task.date).isBetween(
+                    dayjs().startOf('d').add(1, 'day').subtract(1, 'minute'), dayjs().startOf('d').add(8, 'day')
+                )) return true;
+                else return false;
+            }));
+        case 5:
+            return (list.filter(task => task.isPrivate));
+        default:
+            return list;
+    }
 }
 
 export default TaskList;
