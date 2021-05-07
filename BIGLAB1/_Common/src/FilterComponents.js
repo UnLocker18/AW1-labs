@@ -1,14 +1,17 @@
 import Nav from 'react-bootstrap/Nav';
+import { Link, NavLink} from 'react-router-dom';
 
 import {filters} from './data';
 
 function Filter(props) {
     return (
-        <Nav.Link 
-            className="rounded-0 border-top text-dark hover-bg-light" 
-            eventKey={props.id}
-            onSelect={() => props.chooseFilter(props.id)}
-        >{props.text}</Nav.Link>
+        <NavLink 
+            to = {props.url}
+            className="rounded-0 border-top text-dark hover-bg-light nav-link"
+            onClick = {() => props.chooseFilter(props.url)}
+            >
+            {props.text}
+        </NavLink>
     );
 }
 
