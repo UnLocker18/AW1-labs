@@ -8,6 +8,8 @@ import {PersonFill, ThreeDotsVertical, Trash2Fill, PencilSquare} from 'react-boo
 import React, { useState } from 'react';
 import {TaskForm} from './AdderComponents';
 
+import {BrowserRouter as Router, Route, Switch, Redirect, useLocation} from "react-router-dom"
+
 dayjs.extend(isBetween);
 
 function Task(props) {
@@ -36,6 +38,7 @@ function Task(props) {
 function TaskList(props) {
     const { tasks, activeFilter, ...propsObj } = props;
     let newList = applyFilter(activeFilter, tasks);
+    if(newList === undefined) return (  <Redirect to="/all" /> );
 
     const taskList = newList.map(task => <Task key={task.id} task={task} {...propsObj} />);
     return (
@@ -105,6 +108,8 @@ function TaskControls(props) {
 const applyFilter = (selected, list) => {
 
     switch (selected) {
+        case '/all':
+            return list;
         case '/important':
             return (list.filter(task => task.isUrgent));
         case '/today':
@@ -123,7 +128,7 @@ const applyFilter = (selected, list) => {
         case '/private':
             return (list.filter(task => task.isPrivate));
         default:
-            return list;
+            return undefined;
     }
 }
 

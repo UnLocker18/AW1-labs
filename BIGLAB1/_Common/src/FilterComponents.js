@@ -7,8 +7,7 @@ function Filter(props) {
     return (
         <NavLink 
             to={ {
-                pathname: `${props.url}`,
-                state: { url: props.url }
+                pathname: `${props.url}`
             } }
             
             className="rounded-0 border-top text-dark hover-bg-light nav-link"
