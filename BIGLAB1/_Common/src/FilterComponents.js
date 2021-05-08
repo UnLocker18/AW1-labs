@@ -6,9 +6,12 @@ import {filters} from './data';
 function Filter(props) {
     return (
         <NavLink 
-            to = {props.url}
+            to={ {
+                pathname: `${props.url}`,
+                state: { url: props.url }
+            } }
+            
             className="rounded-0 border-top text-dark hover-bg-light nav-link"
-            onClick = {() => props.chooseFilter(props.url)}
             >
             {props.text}
         </NavLink>
@@ -16,7 +19,7 @@ function Filter(props) {
 }
 
 function FilterList(props) {
-    const filterList = filters.map( filter => <Filter key={filter.id} chooseFilter={props.chooseFilter} {...filter} />)
+    const filterList = filters.map( filter => <Filter key={filter.id} {...filter} />)
     return (
         <Nav variant="pills" className="flex-column" defaultActiveKey="1" id="filter-list">
             {filterList}

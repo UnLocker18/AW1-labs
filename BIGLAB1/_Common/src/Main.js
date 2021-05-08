@@ -109,8 +109,10 @@ function Main(props) {
         setIsPrivate, setIsImportant, handleSubmit, handleDateChange, handleDescChange, handleTimeChange
     };
 
+    
     return (
-        <Col as="main" lg={8} className="py-3"><h1>{/*filters[props.activeFilter - 1].text*/}</h1>
+        <Col as="main" lg={8} className="py-3">
+            <h1>{filters.filter( filter => filter.url === props.activeFilter)[0].text}</h1>
             <TaskList tasks={tasks} deleteTask={deleteTask} activeFilter={props.activeFilter} {...formProps} />
             <Container fluid className="fixed-bottom d-flex flex-row-reverse px-4 mb-4">
                 <TaskAdder clearForm={clearForm} show={show} handleShow={handleShow} handleClose={handleClose} {...formProps} />
