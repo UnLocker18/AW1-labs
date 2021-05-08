@@ -3,13 +3,14 @@ import './App.css';
 
 import Main from './Main';
 import FilterList from './FilterComponents';
-import MainNav from './MainNav'
-import {filters} from './data'
+import MainNav from './MainNav';
+import { filters } from './data';
+import { filterToUrl, useViewport } from './utils';
 
-import {Container, Col, Collapse} from 'react-bootstrap';
+import { Container, Col, Collapse } from 'react-bootstrap';
 
-import React, {useState} from 'react';
-import {BrowserRouter as Router, Route, Switch, Redirect, useLocation} from "react-router-dom"
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Switch, Redirect, useLocation } from "react-router-dom";
 
 function App() {
   const [open, setOpen] = useState(true);
@@ -26,7 +27,7 @@ function App() {
 
 function Content(props) {
   const location = useLocation();
-  const filter = filters.filter( filter => filter.url === location.pathname);
+  const filter = filters.filter( filter => filterToUrl(filter.text) === location.pathname);
 
   const { width } = useViewport();
   const breakpoint = 992;
@@ -36,7 +37,7 @@ function Content(props) {
   return(
     <Container fluid className="d-flex flex-lg-grow-1 flex-wrap m-0 p-0">
       <Aside lg={lg} isOpen={props.isOpen} />
-      <Main lg={lg} activeFilter={filter[0] ? filter[0].url : ""}/>
+      <Main lg={lg} activeFilter={filter[0] ? filterToUrl(filter[0].text) : ""}/>
     </Container>
   );
 }
@@ -53,18 +54,6 @@ function Aside(props) {
       </Col>
     </Collapse>
   );
-}
-
-const useViewport = () => {
-  const [width, setWidth] = useState(window.innerWidth);
-
-  React.useEffect( () => {
-    const handleWindowResize = () => setWidth(window.innerWidth);
-    window.addEventListener("resize", handleWindowResize);
-    return () => window.removeEventListener("resize", handleWindowResize);
-  }, [] );
-
-  return { width };
 }
 
 export default App;

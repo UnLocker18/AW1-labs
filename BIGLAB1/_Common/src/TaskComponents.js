@@ -1,16 +1,12 @@
-import dayjs from 'dayjs';
-import isBetween from 'dayjs/plugin/isBetween';
-
-import {ListGroup, Col, Form, Dropdown} from 'react-bootstrap';
-
-import {PersonFill, ThreeDotsVertical, Trash2Fill, PencilSquare} from 'react-bootstrap-icons';
+import { ListGroup, Col, Form, Dropdown } from 'react-bootstrap';
+import { PersonFill, ThreeDotsVertical, Trash2Fill, PencilSquare } from 'react-bootstrap-icons';
 
 import React, { useState } from 'react';
-import {TaskForm} from './AdderComponents';
 
-import {BrowserRouter as Router, Route, Switch, Redirect, useLocation} from "react-router-dom"
+import { applyFilter } from './utils';
+import { TaskForm } from './AdderComponents';
 
-dayjs.extend(isBetween);
+import { Redirect } from "react-router-dom";
 
 function Task(props) {
     const { task, deleteTask, ...propsObj } = props;    
@@ -103,33 +99,6 @@ function TaskControls(props) {
             </Dropdown.Menu>
         </Dropdown>
     );
-}
-
-const applyFilter = (selected, list) => {
-
-    switch (selected) {
-        case '/all':
-            return list;
-        case '/important':
-            return (list.filter(task => task.isUrgent));
-        case '/today':
-            return (list.filter(task => {
-                if (dayjs(task.date).format("YYYY-MM-DD") === dayjs().format("YYYY-MM-DD")) return true;
-                else return false;
-            }));
-
-        case '/next_week':
-            return (list.filter(task => {
-                if (dayjs(task.date).isBetween(
-                    dayjs().startOf('d').add(1, 'day').subtract(1, 'minute'), dayjs().startOf('d').add(8, 'day')
-                )) return true;
-                else return false;
-            }));
-        case '/private':
-            return (list.filter(task => task.isPrivate));
-        default:
-            return undefined;
-    }
 }
 
 export default TaskList;
