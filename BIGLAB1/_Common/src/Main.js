@@ -110,7 +110,7 @@ function Main(props) {
         setIsPrivate, setIsImportant, handleSubmit, handleDateChange, handleDescChange, handleTimeChange
     };
 
-    const filterName = filters.filter( filter => filterToUrl(filter.text) == props.activeFilter);
+    const filterName = filters.filter( filter => filterToUrl(filter.text) === props.activeFilter);
 
     return (
         <Col as="main" lg={8} className="py-3">

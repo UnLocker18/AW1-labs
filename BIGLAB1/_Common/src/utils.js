@@ -4,7 +4,7 @@ import isBetween from 'dayjs/plugin/isBetween';
 
 dayjs.extend(isBetween);
 
-const filterToUrl = (filterText) => '/' + filterText.toLowerCase().replaceAll(' ', '_');
+const filterToUrl = (filterText) => filterText.toLowerCase().replaceAll(' ', '_');
 
 const useViewport = () => {
     const [width, setWidth] = useState(window.innerWidth);
@@ -21,24 +21,24 @@ const useViewport = () => {
 const applyFilter = (selected, list) => {
 
     switch (selected) {
-        case '/all':
+        case 'all':
             return list;
-        case '/important':
+        case 'important':
             return (list.filter(task => task.isUrgent));
-        case '/today':
+        case 'today':
             return (list.filter(task => {
                 if (dayjs(task.date).format("YYYY-MM-DD") === dayjs().format("YYYY-MM-DD")) return true;
                 else return false;
             }));
 
-        case '/next_7_days':
+        case 'next_7_days':
             return (list.filter(task => {
                 if (dayjs(task.date).isBetween(
                     dayjs().startOf('d').add(1, 'day').subtract(1, 'minute'), dayjs().startOf('d').add(8, 'day')
                 )) return true;
                 else return false;
             }));
-        case '/private':
+        case 'private':
             return (list.filter(task => task.isPrivate));
         default:
             return undefined;

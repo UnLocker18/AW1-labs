@@ -33,10 +33,13 @@ function Task(props) {
 
 function TaskList(props) {
     const { tasks, activeFilter, ...propsObj } = props;
+
     let newList = applyFilter(activeFilter, tasks);
+
     if(newList === undefined) return (  <Redirect to="/all" /> );
 
     const taskList = newList.map(task => <Task key={task.id} task={task} {...propsObj} />);
+
     return (
         <ListGroup variant="flush" className="margin-b-75">
             {taskList}
