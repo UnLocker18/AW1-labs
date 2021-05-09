@@ -10,7 +10,7 @@ import List from 'react-bootstrap-icons/dist/icons/list';
 
 function Toggle(props) {
     return (
-        <Button onClick={() => props.toggleOpen(props.open)} variant="link" className='d-lg-none'>
+        <Button onClick={() => props.toggleCollapse(wasOpen => !wasOpen)} variant="link" className='d-lg-none'>
             <List color="white" size={32} />
         </Button>
     );
@@ -19,9 +19,9 @@ function Toggle(props) {
 function MainNav(props) {
     return (
         <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-            <Container fluid className="my-1">
+            <Container fluid className="my-1 mx-auto">
                 <Toggle {...props} />
-                <Navbar.Brand className="d-flex align-items-center" href="#home">
+                <Navbar.Brand className="d-flex align-items-center justify-content-between" href="#home">
                     <Check2All color="white" size={36} className="mr-2" />
                     <h4>ToDO Manager</h4>
                 </Navbar.Brand>
