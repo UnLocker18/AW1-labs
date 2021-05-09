@@ -40,21 +40,28 @@ function Main(props) {
         value: currentTask.description,
         isValid: checkDescValidity(currentTask.description),
       });
+
       setIsPrivate(currentTask.isPrivate);
       setIsImportant(currentTask.isUrgent);
-      if (!currentTask.date) currentTask.date = dayjs();
+
+      //if (!currentTask.date) currentTask.date = dayjs();
+
       setDate({
-        value: currentTask.date.format('YYYY-MM-DD'),
+        value: currentTask.date ? currentTask.date.format('YYYY-MM-DD') : '',
         isValid: checkDateValidity(currentTask.date, editMode),
       });
 
       //setto l'orario mostrato come quello che avevo inserito
-      const time = currentTask.date
+      /* const formattedTime = currentTask.date
         ? currentTask.date.hour() + ':' + currentTask.date.minute()
         : '00:00';
 
-      setTime(time);
-    } else clearForm();
+      console.log('formattedTime' ,formattedTime);
+      setTime(formattedTime); */
+
+      setTime(currentTask.date ? currentTask.date.format("HH:mm") : '');
+    }
+    else clearForm();
 
     setEditMode(tskID);
   };
