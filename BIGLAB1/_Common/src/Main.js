@@ -2,11 +2,12 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 
-import {filters, tl} from './data';
-import {TaskAdder} from './AdderComponents';
+import { filters, tl } from './data';
+import { filterToUrl } from './utils';
+import { TaskAdder } from './AdderComponents';
 import TaskList from './TaskComponents';
 
-import {Col, Container} from 'react-bootstrap';
+import { Col, Container } from 'react-bootstrap';
 
 import React, { useState } from 'react';
 
@@ -109,8 +110,11 @@ function Main(props) {
         setIsPrivate, setIsImportant, handleSubmit, handleDateChange, handleDescChange, handleTimeChange
     };
 
+    const filterName = filters.filter( filter => filterToUrl(filter.text) === props.activeFilter);
+
     return (
-        <Col as="main" lg={8} className="py-3"><h1>{/*filters[props.activeFilter - 1].text*/}</h1>
+        <Col as="main" lg={8} className="py-3">
+            <h1>{filterName[0] ? filterName[0].text : ""}</h1>
             <TaskList tasks={tasks} deleteTask={deleteTask} activeFilter={props.activeFilter} {...formProps} />
             <Container fluid className="fixed-bottom d-flex flex-row-reverse px-4 mb-4">
                 <TaskAdder clearForm={clearForm} show={show} handleShow={handleShow} handleClose={handleClose} {...formProps} />

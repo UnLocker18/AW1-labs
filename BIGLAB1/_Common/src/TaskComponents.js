@@ -1,14 +1,12 @@
-import dayjs from 'dayjs';
-import isBetween from 'dayjs/plugin/isBetween';
-
-import {ListGroup, Col, Form, Dropdown} from 'react-bootstrap';
-
-import {PersonFill, ThreeDotsVertical, Trash2Fill, PencilSquare} from 'react-bootstrap-icons';
+import { ListGroup, Col, Form, Dropdown } from 'react-bootstrap';
+import { PersonFill, ThreeDotsVertical, Trash2Fill, PencilSquare } from 'react-bootstrap-icons';
 
 import React, { useState } from 'react';
-import {TaskForm} from './AdderComponents';
 
-dayjs.extend(isBetween);
+import { applyFilter } from './utils';
+import { TaskForm } from './AdderComponents';
+
+import { Redirect } from "react-router-dom";
 
 function Task(props) {
     const { task, deleteTask, ...propsObj } = props;    
@@ -35,9 +33,13 @@ function Task(props) {
 
 function TaskList(props) {
     const { tasks, activeFilter, ...propsObj } = props;
+
     let newList = applyFilter(activeFilter, tasks);
 
+    if(newList === undefined) return (  <Redirect to="/all" /> );
+
     const taskList = newList.map(task => <Task key={task.id} task={task} {...propsObj} />);
+
     return (
         <ListGroup variant="flush" className="margin-b-75">
             {taskList}
@@ -100,31 +102,6 @@ function TaskControls(props) {
             </Dropdown.Menu>
         </Dropdown>
     );
-}
-
-const applyFilter = (selected, list) => {
-
-    switch (selected) {
-        case '/important':
-            return (list.filter(task => task.isUrgent));
-        case '/today':
-            return (list.filter(task => {
-                if (dayjs(task.date).format("YYYY-MM-DD") === dayjs().format("YYYY-MM-DD")) return true;
-                else return false;
-            }));
-
-        case '/next_week':
-            return (list.filter(task => {
-                if (dayjs(task.date).isBetween(
-                    dayjs().startOf('d').add(1, 'day').subtract(1, 'minute'), dayjs().startOf('d').add(8, 'day')
-                )) return true;
-                else return false;
-            }));
-        case '/private':
-            return (list.filter(task => task.isPrivate));
-        default:
-            return list;
-    }
 }
 
 export default TaskList;
