@@ -25,7 +25,7 @@ function Task(props) {
   const { task, deleteTask, ...propsObj } = props;
 
   return props.editMode === task.id ? (
-    <TaskForm {...propsObj} />
+    <TaskForm {...propsObj} tskID={task.id} />
   ) : (
     <ListGroup.Item className="d-flex align-items-center">
       <Col

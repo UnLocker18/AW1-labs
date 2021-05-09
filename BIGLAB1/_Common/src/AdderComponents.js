@@ -80,7 +80,7 @@ function TaskForm(props) {
   const formDeadline = (
     <Form.Control
       type="date"
-      onChange={ev => props.handleDateChange(ev)}
+      onChange={ev => props.handleDateChange(ev, -1)}
       isInvalid={!props.validated ? false : !props.date.isValid}
       isValid={!props.validated ? false : props.date.isValid}
       value={props.date.value}
@@ -161,7 +161,7 @@ function TaskForm(props) {
           <Form.Control
             className="mr-3"
             type="date"
-            onChange={ev => props.handleDateChange(ev)}
+            onChange={ev => props.handleDateChange(ev, props.tskID)}
             isInvalid={!props.validated ? false : !props.date.isValid}
             isValid={!props.validated ? false : props.date.isValid}
             value={props.date.value}
