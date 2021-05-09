@@ -84,13 +84,19 @@ function Main(props) {
         id = editMode;
         deleteTask(id);
       } else id = tasks.sort((a, b) => a.id - b.id)[tasks.length - 1].id + 1;
+      
+      let taskDate;
+
+      if (!date.value) taskDate = '';
+      else if (date.value && !time) taskDate = dayjs.tz(`${date.value}T00:00:00.000Z`);
+      else taskDate = dayjs.tz(`${date.value}T${time}:00.000Z`);
 
       const task = {
         id: id,
         description: description.value,
         isPrivate: isPrivate,
         isUrgent: isImportant,
-        date: date.value && dayjs.tz(`${date.value}T${time}:00.000Z`),
+        date: taskDate,
       };
 
       setTasks(tsks => [...tsks, task].sort((a, b) => a.id - b.id));
