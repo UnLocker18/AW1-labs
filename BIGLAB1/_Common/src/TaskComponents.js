@@ -12,11 +12,12 @@ import {
 } from 'react-bootstrap-icons';
 
 import React, { useState } from 'react';
-
-import { applyFilter } from './utils';
 import { TaskForm } from './AdderComponents';
 
+import { applyFilter } from './utils';
+
 import { Redirect } from 'react-router-dom';
+
 dayjs.extend(isBetween);
 dayjs.extend(isToday);
 
@@ -45,7 +46,9 @@ function Task(props) {
         as="span"
         className="font-075 text-right d-flex justify-content-end align-items-center"
       >
-        <span>{task.date.format('dddd D MMMM YYYY [at] H:mm')}</span>
+        <span>
+          {task.date && task.date.format('dddd D MMMM YYYY [at] H:mm')}
+        </span>
         <TaskControls
           taskID={task.id}
           deleteTask={deleteTask}

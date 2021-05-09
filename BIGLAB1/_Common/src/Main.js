@@ -23,7 +23,7 @@ function Main(props) {
   const [description, setDescription] = useState({ value: '', isValid: false });
   const [isPrivate, setIsPrivate] = useState(false);
   const [isImportant, setIsImportant] = useState(false);
-  const [date, setDate] = useState({ value: undefined, isValid: false });
+  const [date, setDate] = useState({ value: '', isValid: true });
   const [time, setTime] = useState('00:00');
   const [validated, setValidated] = useState(false);
 
@@ -35,19 +35,23 @@ function Main(props) {
     if (tskID >= 0) {
       const currentTask = tasks.find(task => task.id === tskID);
 
+      //qui la checkDescValidity dovrebbe essere inutile
       setDescription({
         value: currentTask.description,
         isValid: checkDescValidity(currentTask.description),
       });
       setIsPrivate(currentTask.isPrivate);
       setIsImportant(currentTask.isUrgent);
+      if (!currentTask.date) currentTask.date = dayjs();
       setDate({
-        value: currentTask.date,
-        isValid: checkDateValidity(currentTask.date),
+        value: currentTask.date.format('YYYY-MM-DD'),
+        isValid: checkDateValidity(currentTask.date, editMode),
       });
 
       //setto l'orario mostrato come quello che avevo inserito
-      const time = currentTask.date.hour() + ':' + currentTask.date.minute();
+      const time = currentTask.date
+        ? currentTask.date.hour() + ':' + currentTask.date.minute()
+        : '00:00';
 
       setTime(time);
     } else clearForm();
@@ -79,10 +83,8 @@ function Main(props) {
         description: description.value,
         isPrivate: isPrivate,
         isUrgent: isImportant,
-        date: dayjs.tz(`${date.value}T${time}:00.000Z`),
+        date: date.value && dayjs.tz(`${date.value}T${time}:00.000Z`),
       };
-
-      console.log(time);
 
       setTasks(tsks => [...tsks, task].sort((a, b) => a.id - b.id));
       handleClose();
@@ -102,7 +104,7 @@ function Main(props) {
   const handleDateChange = ev => {
     setDate({
       value: ev.target.value,
-      isValid: checkDateValidity(ev.target.value),
+      isValid: checkDateValidity(ev.target.value, editMode),
     });
   };
 
@@ -112,14 +114,18 @@ function Main(props) {
 
   const checkDescValidity = desc => !!desc;
 
-  const checkDateValidity = date => dayjs(date) >= dayjs().startOf('d');
+  const checkDateValidity = (date, editMode) => {
+    if (!date) return true;
+    else if (editMode >= 0) return true;
+    else return dayjs(date) >= dayjs().startOf('d');
+  };
 
   const clearForm = () => {
     setValidated(false);
     setDescription({ value: '', isValid: false });
     setIsPrivate(false);
     setIsImportant(false);
-    setDate({ value: undefined, isValid: false });
+    setDate({ value: '', isValid: true });
     setTime('00:00');
   };
 
