@@ -1,0 +1,21 @@
+.height-100 {
+  height: 100vh;
+}
+.font-075 {
+  font-size: 0.75rem;
+}
+.font-1_10 {
+  font-size: 1.10rem;
+}
+.margin-b-75 {
+  margin-bottom: 7.5rem;
+}
+.min-width-5 {
+  min-width: 5rem !important;
+}
+.nav-pills .nav-link.active, .nav-pills .show > .active-success {
+  background-color: #17a2b8;
+}
+.hover-bg-light:hover {
+  background-color: #f8f9fa;
+}

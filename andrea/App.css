@@ -1,0 +1,15 @@
+.aside{
+  height:100vh;
+}
+
+body{
+  overflow:hidden;
+}
+
+.addTask{
+  width: 40px;
+  height: 40px;
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+}
