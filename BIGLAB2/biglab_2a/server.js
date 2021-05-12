@@ -17,7 +17,7 @@ app.get("/api/tasks", async (req, res) => {
         res.status(200).json(tasks);
     }
     catch{
-        res.status(500).end();
+        res.status(500).json({error: "api GET /tasks "});
     }
 })
 
@@ -28,7 +28,7 @@ app.get("/api/tasks/:id(\\d+)", async (req, res) => {
         res.status(200).json(task);
     }
     catch{
-        res.status(500).json({error: "id error"});
+        res.status(500).json({error: "api GET /tasks/:id "});
     }
 })
 
@@ -39,7 +39,7 @@ app.get("/api/tasks/:filter", async (req, res) => {
         res.status(200).json(tasks);
     }
     catch{
-        res.status(500).json({error: "filter error"});
+        res.status(500).json({error: "api GET /tasks/:filter"});
     }
 })
 

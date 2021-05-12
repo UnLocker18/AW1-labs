@@ -20,15 +20,16 @@ exports.listTasks = () => {
                 reject(err); 
             }
             else{
-                const tasks = rows.map( task => ({id: task.id,
-                                                 description: task.description,
-                                                 important: task.important,
-                                                 private: task.private,
-                                                 deadline: task.deadline,
-                                                 completed: task.completed,
-                                                 user: task.user
-                                                })
-                                        );
+                const tasks = rows.map( task => ({
+                  id: task.id,
+                  description: task.description,
+                  important: task.important,
+                  private: task.private,
+                  deadline: task.deadline,
+                  completed: task.completed,
+                  user: task.user
+                })
+              );
                 resolve(tasks);                       
             }
         })
@@ -44,19 +45,23 @@ exports.listFilteredTasks = (filterName) => {
                 reject(err); 
             }
             else{
+              if(rows === undefined) resolve({ error: 'Tasks not found in database'});
+              else{
                 const tasks = rows.map( task => (
-                    {
-                        id: task.id,
-                        description: task.description,
-                        important: task.important,
-                        private: task.private,
-                        deadline: task.deadline,
-                        completed: task.completed,
-                        user: task.user
-                    })
-                );
-
-                resolve(applyFilter(filterName, tasks));                       
+                  {
+                      id: task.id,
+                      description: task.description,
+                      important: task.important,
+                      private: task.private,
+                      deadline: task.deadline,
+                      completed: task.completed,
+                      user: task.user
+                  })
+              );
+              const filteredTasks = applyFilter(filterName, tasks);
+              if(filteredTasks === undefined) resolve({ error: 'Filter not valid' });
+              else resolve(filteredTasks);      
+              }
             }
         })
     })
@@ -110,7 +115,7 @@ exports.listTaskById = (taskId) =>{
             }
             else{
                 if(row == undefined){
-                    resolve({error: 'Task not found'});
+                    resolve({error: 'Task not found in database'});
                 }
                 else{
                     const task = {
