@@ -165,20 +165,6 @@ exports.updateTask = (task) => {
       });
     });
   };
-
-  //set a task as completed
-  exports.completeTask = (taskId) => {
-    return new Promise((resolve, reject) => {
-      const sql = 'UPDATE tasks SET completed= ? WHERE id = ?';
-      db.run(sql, [task.completed, task.id],  (err) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        resolve(this.lastID);
-      });
-    });
-  };
   
   // delete an existing exam
   exports.deleteExam = (id) => {

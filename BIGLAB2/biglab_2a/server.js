@@ -43,44 +43,4 @@ app.get("/api/tasks/:filter", async (req, res) => {
     }
 })
 
-// app.get("/api/tasks/important", async (req, res) => {
-//     try{
-//         const tasks = await dao.listFilteredTasks("important");
-//         res.status(200).json(tasks);
-//     }
-//     catch{
-//         res.status(500).end();
-//     }
-// })
-
-// app.get("/api/tasks/private", async (req, res) => {
-//     try{
-//         const tasks = await dao.listFilteredTasks("private");
-//         res.status(200).json(tasks);
-//     }
-//     catch{
-//         res.status(500).end();
-//     }
-// })
-
-// app.get("/api/tasks/today", async (req, res) => {
-//     try{
-//         const tasks = await dao.listFilteredTasks("today");
-//         res.status(200).json(tasks);
-//     }
-//     catch{
-//         res.status(500).end();
-//     }
-// })
-
-// app.get("/api/tasks/next_7_days", async (req, res) => {
-//     try{
-//         const tasks = await dao.listFilteredTasks("next_7_days");
-//         res.status(200).json(tasks);
-//     }
-//     catch{
-//         res.status(500).end();
-//     }
-// })
-
 app.listen(port, () => console.log(`Server running on http://localhost:${port}`));
