@@ -2,21 +2,36 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 
-import { filters, tl } from './data';
-import { filterToUrl } from './utils';
+import { filters } from './data';
+import { filterToUrl, jsonMapper, jsonMapperInverse } from './utils';
 import { TaskAdder } from './AdderComponents';
 import TaskList from './TaskComponents';
 
 import { Col, Container } from 'react-bootstrap';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.tz.setDefault(dayjs.tz.guess());
 
 function Main(props) {
-  const [tasks, setTasks] = useState([...tl]);
+  const [tasks, setTasks] = useState([]);
+
+  useEffect( () => {
+    fetch('/api/tasks')
+    .then( response => {
+      if(!response.ok) { throw Error(response.statusText); }
+      return response;
+    })
+    .then(response => response.json() )
+    .then(response => { 
+      setTasks(jsonMapper(response.content)); 
+    })
+    .catch( err => console.log(err));
+    
+  }, [] );
+
   const [editMode, setEditMode] = useState(-1);
 
   const [show, setShow] = useState(false);
@@ -28,7 +43,16 @@ function Main(props) {
   const [validated, setValidated] = useState(false);
 
   const deleteTask = tskID => {
-    setTasks(tsks => tsks.filter(t => t.id !== tskID));
+    fetch(`/api/tasks/${tskID}`, 
+    {
+      method: 'DELETE',
+    })
+    .then(data => data.json())
+    .then(json => {
+      console.log(json);
+      setTasks(tsks => tsks.filter(t => t.id !== tskID));
+    })
+    .catch(err => console.log(err));
   };
 
   const editTask = tskID => {
@@ -86,9 +110,23 @@ function Main(props) {
         isPrivate: isPrivate,
         isUrgent: isImportant,
         date: taskDate,
+        completed: 0  
       };
+      const fetchTask = jsonMapperInverse(task);
+      
+      fetch('/api/tasks', 
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json'},
+          body: JSON.stringify(fetchTask)
+        })
+      .then(data => data.json())
+      .then(json => {
+        console.log(json);
+        setTasks(tsks => [...tsks, task].sort((a, b) => a.id - b.id))
+      })
+      .catch(err => console.log(err));
 
-      setTasks(tsks => [...tsks, task].sort((a, b) => a.id - b.id));
       handleClose();
       clearForm();
 
