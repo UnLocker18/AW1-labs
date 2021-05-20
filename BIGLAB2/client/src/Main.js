@@ -9,7 +9,11 @@ import TaskList from './TaskComponents';
 
 import { Col, Container } from 'react-bootstrap';
 
+import { HourglassSplit } from 'react-bootstrap-icons'
+
 import React, { useEffect, useState } from 'react';
+
+import API from './API';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -17,20 +21,21 @@ dayjs.tz.setDefault(dayjs.tz.guess());
 
 function Main(props) {
   const [tasks, setTasks] = useState([]);
+  const [update, setUpdate] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect( () => {
-    fetch('/api/tasks')
-    .then( response => {
-      if(!response.ok) { throw Error(response.statusText); }
-      return response;
-    })
-    .then(response => response.json() )
-    .then(response => { 
-      setTasks(jsonMapper(response.content)); 
-    })
-    .catch( err => console.log(err));
-    
-  }, [] );
+    async function loading() {
+      const data = await API.loadData();
+      setTasks(data);
+      setUpdate(false);
+      setLoading(false);
+    }
+
+    if(update)
+     loading();
+
+  }, [update] );
 
   const [editMode, setEditMode] = useState(-1);
 
@@ -43,16 +48,11 @@ function Main(props) {
   const [validated, setValidated] = useState(false);
 
   const deleteTask = tskID => {
-    fetch(`/api/tasks/${tskID}`, 
-    {
-      method: 'DELETE',
-    })
-    .then(data => data.json())
-    .then(json => {
-      console.log(json);
-      setTasks(tsks => tsks.filter(t => t.id !== tskID));
-    })
-    .catch(err => console.log(err));
+    async function deleting(id) {
+      const response = await API.deleteData(id);
+      if(response.status === 'success') setUpdate(true);
+    }
+    deleting(tskID);
   };
 
   const editTask = tskID => {
@@ -112,20 +112,13 @@ function Main(props) {
         date: taskDate,
         completed: 0  
       };
-      const fetchTask = jsonMapperInverse(task);
-      
-      fetch('/api/tasks', 
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json'},
-          body: JSON.stringify(fetchTask)
-        })
-      .then(data => data.json())
-      .then(json => {
-        console.log(json);
-        setTasks(tsks => [...tsks, task].sort((a, b) => a.id - b.id))
-      })
-      .catch(err => console.log(err));
+
+      async function inserting(task){
+        const response =await API.insertData (task);
+        if(response.status === 'success')
+         setUpdate(true);
+      }
+      inserting(jsonMapperInverse(task));
 
       handleClose();
       clearForm();
@@ -192,7 +185,15 @@ function Main(props) {
   );
 
   return (
-    <Col as="main" lg={8} className="py-3">
+    loading ? 
+    (
+      <Col as="main" lg={8} className="py-3">
+        <HourglassSplit size={32} />
+        <span >Loading data from database server</span>
+      </Col>
+    )
+    :
+    (<Col as="main" lg={8} className="py-3">
       <h1>{filterName[0] ? filterName[0].text : ''}</h1>
       <TaskList
         tasks={tasks}
@@ -212,7 +213,7 @@ function Main(props) {
           {...formProps}
         />
       </Container>
-    </Col>
+    </Col>)
   );
 }
 
