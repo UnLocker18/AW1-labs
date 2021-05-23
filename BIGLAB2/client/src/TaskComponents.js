@@ -9,6 +9,7 @@ import {
   ThreeDotsVertical,
   Trash2Fill,
   PencilSquare,
+  ArrowRepeat
 } from 'react-bootstrap-icons';
 
 import React, { useState } from 'react';
@@ -27,17 +28,20 @@ function Task(props) {
   return props.editMode === task.id ? (
     <TaskForm {...propsObj} tskID={task.id} />
   ) : (
-    <ListGroup.Item className="d-flex align-items-center">
+    <ListGroup.Item className={"d-flex align-items-center " + task.status} >
       <Col
         as="span"
         className={task.isUrgent && 'text-danger font-weight-bold'}
       >
+        {task.status ?
+        <span><ArrowRepeat size={16} className={"loading-animation text-black mr-2"} />{task.description}</span>
+        :
         <Form.Check
           custom
           type="checkbox"
           id={'custom-checkbox-' + task.id}
           label={task.description}
-        />
+        />}
       </Col>
       <Col as="span" className="text-dark text-center">
         {task.isPrivate && <PersonFill size={20} />}
