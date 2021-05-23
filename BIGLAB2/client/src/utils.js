@@ -50,4 +50,28 @@ const applyFilter = (selected, list) => {
   }
 };
 
-export { filterToUrl, useViewport, applyFilter };
+const jsonMapper= (tasks) =>{
+  return tasks.map(task => {
+    return {
+      id: task.id,
+      description: task.description,
+      isPrivate: task.private===1,
+      isUrgent: task.important===1,
+      date: dayjs(task.deadline),
+      completed: task.completed
+    }
+  });
+}
+
+const jsonMapperInverse= (task)=>{
+    return {
+      id: task.id,
+      description: task.description,
+      private: task.isPrivate,
+      important: task.isUrgent,
+      deadline: (task.date && dayjs(task.date).format('YYYY-MM-DD hh:mm')),
+      completed: task.completed
+  }
+}
+
+export { filterToUrl, useViewport, applyFilter, jsonMapper, jsonMapperInverse };

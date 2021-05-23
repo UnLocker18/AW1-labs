@@ -16,13 +16,7 @@ app.use(express.json());
 // GET /api/tasks
 app.get(
   "/api/tasks",
-  [param("id").isInt({ min: 0, max: 100 })],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ err: errors.array() });
-    }
-
     try {
       const tasks = await dao.listTasks();
       res
@@ -65,7 +59,7 @@ app.get(
 // GET /api/tasks:filter
 app.get(
   "/api/tasks/:filter",
-  [param("id").isInt({ min: 0, max: 100 })],
+  param("filter").isLength({ min: 3, max: 100 }),
   async (req, res) => {
     const filter = req.params.filter;
     const errors = validationResult(req);

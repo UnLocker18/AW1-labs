@@ -2,21 +2,41 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 
-import { filters, tl } from './data';
-import { filterToUrl } from './utils';
+import { filters } from './data';
+import { filterToUrl, jsonMapper, jsonMapperInverse } from './utils';
 import { TaskAdder } from './AdderComponents';
 import TaskList from './TaskComponents';
 
 import { Col, Container } from 'react-bootstrap';
 
-import React, { useState } from 'react';
+import { HourglassSplit } from 'react-bootstrap-icons'
+
+import React, { useEffect, useState } from 'react';
+
+import API from './API';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.tz.setDefault(dayjs.tz.guess());
 
 function Main(props) {
-  const [tasks, setTasks] = useState([...tl]);
+  const [tasks, setTasks] = useState([]);
+  const [update, setUpdate] = useState(true);
+  const [loading, setLoading] = useState(true);
+
+  useEffect( () => {
+    async function loading() {
+      const data = await API.loadData();
+      setTasks(data);
+      setUpdate(false);
+      setLoading(false);
+    }
+
+    if(update)
+     loading();
+
+  }, [update] );
+
   const [editMode, setEditMode] = useState(-1);
 
   const [show, setShow] = useState(false);
@@ -28,7 +48,11 @@ function Main(props) {
   const [validated, setValidated] = useState(false);
 
   const deleteTask = tskID => {
-    setTasks(tsks => tsks.filter(t => t.id !== tskID));
+    async function deleting(id) {
+      const response = await API.deleteData(id);
+      if(response.status === 'success') setUpdate(true);
+    }
+    deleting(tskID);
   };
 
   const editTask = tskID => {
@@ -86,9 +110,16 @@ function Main(props) {
         isPrivate: isPrivate,
         isUrgent: isImportant,
         date: taskDate,
+        completed: 0  
       };
 
-      setTasks(tsks => [...tsks, task].sort((a, b) => a.id - b.id));
+      async function inserting(task){
+        const response =await API.insertData (task);
+        if(response.status === 'success')
+         setUpdate(true);
+      }
+      inserting(jsonMapperInverse(task));
+
       handleClose();
       clearForm();
 
@@ -154,7 +185,15 @@ function Main(props) {
   );
 
   return (
-    <Col as="main" lg={8} className="py-3">
+    loading ? 
+    (
+      <Col as="main" lg={8} className="py-3">
+        <HourglassSplit size={32} />
+        <span >Loading data from database server</span>
+      </Col>
+    )
+    :
+    (<Col as="main" lg={8} className="py-3">
       <h1>{filterName[0] ? filterName[0].text : ''}</h1>
       <TaskList
         tasks={tasks}
@@ -174,7 +213,7 @@ function Main(props) {
           {...formProps}
         />
       </Container>
-    </Col>
+    </Col>)
   );
 }
 
