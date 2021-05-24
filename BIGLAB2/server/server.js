@@ -17,16 +17,23 @@ app.use(express.json());
 app.get(
   "/api/tasks",
   async (req, res) => {
-    try {
-      const tasks = await dao.listTasks();
-      res
-        .status(200)
-        .json({ status: "success", details: "api GET /tasks", content: tasks });
-    } catch {
-      res
-        .status(500)
-        .json({ status: "failure", details: `Database Error ${err}` });
-    }
+
+
+    //TOGLIERE setTimeout
+
+
+    setTimeout( async () => {
+      try {
+        const tasks = await dao.listTasks();
+        res
+          .status(200)
+          .json({ status: "success", details: "api GET /tasks", content: tasks });
+      } catch {
+        res
+          .status(500)
+          .json({ status: "failure", details: `Database Error ${err}` });
+      }
+    }, 2000);    
   }
 );
 

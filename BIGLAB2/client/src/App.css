@@ -4,6 +4,9 @@
 .font-075 {
   font-size: 0.75rem;
 }
+.text-black {
+  color: #000;
+}
 .margin-b-75 {
   margin-bottom: 7.5rem;
 }
@@ -42,6 +45,9 @@ span > .max-width-5 {
   font-size: 80%;
   color: #dc3545;
 }
+.deleting {
+  background-color: #dc354510;
+}
 
 .edit-animation {
   animation-name: padding-top-bottom;
@@ -50,6 +56,10 @@ span > .max-width-5 {
   animation-fill-mode: forwards;
   padding-top: 0;
   padding-bottom: 0;
+}
+
+.loading-animation {
+  animation: rotation 4s linear infinite;
 }
 
 @keyframes padding-top-bottom {
@@ -61,4 +71,8 @@ span > .max-width-5 {
     padding-top: 1rem;
     padding-bottom: 1rem;
   }
+}
+
+@keyframes rotation {
+  100% { transform:rotate(360deg); }
 }

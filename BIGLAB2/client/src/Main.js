@@ -3,13 +3,13 @@ import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 
 import { filters } from './data';
-import { filterToUrl, jsonMapper, jsonMapperInverse } from './utils';
+import { filterToUrl, jsonMapperInverse } from './utils';
 import { TaskAdder } from './AdderComponents';
 import TaskList from './TaskComponents';
 
 import { Col, Container } from 'react-bootstrap';
 
-import { HourglassSplit } from 'react-bootstrap-icons'
+import { ArrowRepeat } from 'react-bootstrap-icons';
 
 import React, { useEffect, useState } from 'react';
 
@@ -48,6 +48,15 @@ function Main(props) {
   const [validated, setValidated] = useState(false);
 
   const deleteTask = tskID => {
+    setTasks(oldTasks => {
+      return oldTasks.map(tsk => {
+        if (tsk.id === tskID)
+          return {...tsk, status: 'deleting'};
+        else
+          return tsk;
+      });
+    });
+
     async function deleting(id) {
       const response = await API.deleteData(id);
       if(response.status === 'success') setUpdate(true);
@@ -113,8 +122,11 @@ function Main(props) {
         completed: 0  
       };
 
+      task.status = "loading";
+      setTasks( oldTasks => [...oldTasks.filter(task => task.id != id), task]);
+
       async function inserting(task){
-        const response =await API.insertData (task);
+        const response = await API.insertData(task);
         if(response.status === 'success')
          setUpdate(true);
       }
@@ -187,8 +199,8 @@ function Main(props) {
   return (
     loading ? 
     (
-      <Col as="main" lg={8} className="py-3">
-        <HourglassSplit size={32} />
+      <Col as="main" lg={8} className="py-5 text-center">
+        <ArrowRepeat size={32} className="loading-animation mr-3" />
         <span >Loading data from database server</span>
       </Col>
     )
