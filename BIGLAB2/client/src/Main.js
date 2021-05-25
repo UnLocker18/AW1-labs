@@ -15,6 +15,8 @@ import React, { useEffect, useState } from 'react';
 
 import API from './API';
 
+import { Redirect } from 'react-router-dom';
+
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.tz.setDefault(dayjs.tz.guess());
@@ -23,10 +25,16 @@ function Main(props) {
   const [tasks, setTasks] = useState([]);
   const [update, setUpdate] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [activeFilter, setActiveFilter] = useState(props.activeFilter);
 
   useEffect( () => {
-    async function loading() {
-      const data = await API.loadData();
+    async function loading() {  
+      if(filterName.length===0) return <Redirect to="/all" />;
+      
+      let filter = filterName[0].text;
+      if(filter === "Next 7 Days") filter = "next_7_days";
+
+      const data = await API.loadFilteredData(filter.toLowerCase());
       setTasks(data);
       setUpdate(false);
       setLoading(false);
@@ -34,8 +42,14 @@ function Main(props) {
 
     if(update)
      loading();
+    else{
+      if(props.activeFilter !== activeFilter){
+        setActiveFilter(props.activeFilter);
+        loading();
+      }
+    }
 
-  }, [update] );
+  }, [update, props.activeFilter] );
 
   const [editMode, setEditMode] = useState(-1);
 
@@ -46,6 +60,7 @@ function Main(props) {
   const [date, setDate] = useState({ value: '', isValid: true });
   const [time, setTime] = useState('00:00');
   const [validated, setValidated] = useState(false);
+  const [completed, setCompleted] = useState(false);
 
   const deleteTask = tskID => {
     setTasks(oldTasks => {
@@ -75,6 +90,7 @@ function Main(props) {
 
       setIsPrivate(currentTask.isPrivate);
       setIsImportant(currentTask.isUrgent);
+      setCompleted(currentTask.completed);
 
       setDate({
         value: currentTask.date ? currentTask.date.format('YYYY-MM-DD') : '',
@@ -98,14 +114,9 @@ function Main(props) {
 
   const handleSubmit = event => {
     event.preventDefault();
-    let id;
 
     if (description.isValid && date.isValid) {
-      if (editMode >= 0) {
-        id = editMode;
-        deleteTask(id);
-      } else id = tasks.sort((a, b) => a.id - b.id)[tasks.length - 1].id + 1;
-
+      let id = tasks.sort((a, b) => a.id - b.id)[tasks.length - 1].id + 1;
       let taskDate;
 
       if (!date.value) taskDate = '';
@@ -114,23 +125,37 @@ function Main(props) {
       else taskDate = dayjs.tz(`${date.value}T${time}:00.000Z`);
 
       const task = {
-        id: id,
+        id: editMode > 0 ? editMode : id,
         description: description.value,
         isPrivate: isPrivate,
         isUrgent: isImportant,
         date: taskDate,
-        completed: 0  
+        completed: completed
       };
 
       task.status = "loading";
-      setTasks( oldTasks => [...oldTasks.filter(task => task.id != id), task]);
+      if(editMode === -1)
+        setTasks( oldTasks => [...oldTasks.filter(task => task.id !== id), task]);
+      else
+        setTasks( tasks );
 
       async function inserting(task){
         const response = await API.insertData(task);
+        console.log(response);
         if(response.status === 'success')
-         setUpdate(true);
+          setUpdate(true);
       }
-      inserting(jsonMapperInverse(task));
+
+      async function modifying(task){
+
+        const response = await API.modifyData(task);
+        console.log(response);
+        if(response.status === 'success')
+          setUpdate(true);
+      }
+      
+      if(editMode > 0) modifying(jsonMapperInverse(task));
+      else inserting(jsonMapperInverse(task));
 
       handleClose();
       clearForm();
@@ -174,6 +199,32 @@ function Main(props) {
     setTime('00:00');
   };
 
+  const completeTask = (res, tskID) =>{
+    setCompleted(res);
+    const currentTask = tasks.find(task => task.id === tskID);
+
+    const task = {
+      id: tskID,
+      description: currentTask.description,
+      isPrivate: currentTask.isPrivate,
+      isUrgent: currentTask.isUrgent,
+      date: currentTask.date,
+      completed: res
+    };
+    console.log(task);
+
+    async function modifying(task){
+      const response = await API.modifyData(task);
+      console.log(task);
+      console.log(response);
+      if(response.status === 'success')
+        setUpdate(true);
+    }
+
+    modifying(jsonMapperInverse(task));
+  }
+
+
   const formProps = {
     lg: props.lg,
     editMode,
@@ -181,9 +232,12 @@ function Main(props) {
     description,
     isPrivate,
     isImportant,
+    completed,
     date,
     time,
     validated,
+    completeTask,
+    setCompleted,
     setIsPrivate,
     setIsImportant,
     handleSubmit,

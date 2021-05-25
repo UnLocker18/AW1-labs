@@ -13,6 +13,23 @@ const loadData = () =>{
     );
 }
 
+const loadFilteredData = (filter) =>{
+  return (
+    fetch(`/api/tasks/${filter}`)
+    .then( response => {
+      if(!response.ok) { throw Error(response.statusText); }
+      return response;
+    })
+    .then(response => response.json() )
+    .then(response => {
+      console.log(response.content);
+      console.log(jsonMapper(response.content));
+      return jsonMapper(response.content);
+    })
+    .catch( err => console.log(err))
+);
+}
+
 const insertData = (task) =>{
     return (
         fetch('/api/tasks', 
@@ -26,6 +43,19 @@ const insertData = (task) =>{
     );
 }
 
+const modifyData = (task) =>{
+  return (
+    fetch(`/api/tasks/${task.id}`, 
+    {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify(task)
+    })
+  .then(data => data.json())
+  .catch(err => console.log(err))
+);
+}
+
 const deleteData = (tskID) =>{
     return (
         fetch(`/api/tasks/${tskID}`, 
@@ -37,6 +67,6 @@ const deleteData = (tskID) =>{
     );
 }
 
-const API = {loadData, insertData, deleteData};
+const API = {loadData, insertData, deleteData, loadFilteredData, modifyData};
 
 export default API;

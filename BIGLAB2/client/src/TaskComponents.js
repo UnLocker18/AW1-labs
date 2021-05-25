@@ -41,6 +41,7 @@ function Task(props) {
           type="checkbox"
           id={'custom-checkbox-' + task.id}
           label={task.description}
+          onClick={ ev => props.completeTask(ev.target.checked, task.id)}
         />}
       </Col>
       <Col as="span" className="text-dark text-center">
@@ -66,11 +67,14 @@ function Task(props) {
 function TaskList(props) {
   const { tasks, activeFilter, ...propsObj } = props;
 
-  let newList = applyFilter(activeFilter, tasks);
-
-  if (newList === undefined) return <Redirect to="/all" />;
-
-  const taskList = newList.map(task => (
+  // let newList = applyFilter(activeFilter, tasks);
+  // if (newList === undefined) return <Redirect to="/all" />;
+  // if(tasks === undefined) return <Redirect to="/all" />
+  // const taskList = newList.map(task => (
+  //   <Task key={task.id} task={task} {...propsObj} />
+  // ));
+  
+  const taskList = tasks.map(task => (
     <Task key={task.id} task={task} {...propsObj} />
   ));
 

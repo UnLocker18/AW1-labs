@@ -57,7 +57,7 @@ const jsonMapper= (tasks) =>{
       description: task.description,
       isPrivate: task.private===1,
       isUrgent: task.important===1,
-      date: dayjs(task.deadline),
+      date: (task.deadline ? dayjs(task.deadline) : ""),
       completed: task.completed
     }
   });
@@ -69,7 +69,7 @@ const jsonMapperInverse= (task)=>{
       description: task.description,
       private: task.isPrivate,
       important: task.isUrgent,
-      deadline: (task.date && dayjs(task.date).format('YYYY-MM-DD hh:mm')),
+      deadline: (task.date ? task.date.format('YYYY-MM-DD hh:mm') : null),
       completed: task.completed
   }
 }
