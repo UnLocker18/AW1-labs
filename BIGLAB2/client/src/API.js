@@ -21,11 +21,7 @@ const loadFilteredData = (filter) =>{
       return response;
     })
     .then(response => response.json() )
-    .then(response => {
-      console.log(response.content);
-      console.log(jsonMapper(response.content));
-      return jsonMapper(response.content);
-    })
+    .then(response => jsonMapper(response.content) )
     .catch( err => console.log(err))
 );
 }

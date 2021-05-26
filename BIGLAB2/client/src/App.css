@@ -48,7 +48,9 @@ span > .max-width-5 {
 .deleting {
   background-color: #dc354510;
 }
-
+.updating {
+  background-color:lightgoldenrodyellow;
+}
 .edit-animation {
   animation-name: padding-top-bottom;
   animation-duration: .15s;

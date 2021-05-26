@@ -133,23 +133,29 @@ function Main(props) {
         completed: completed
       };
 
-      task.status = "loading";
-      if(editMode === -1)
+      if(editMode === -1){
+        task.status = "loading";
         setTasks( oldTasks => [...oldTasks.filter(task => task.id !== id), task]);
-      else
-        setTasks( tasks );
+      }
+      else{
+        setTasks(oldTasks => {
+          return oldTasks.map(tsk => {
+            if (tsk.id === editMode)
+              return {...tsk, status: 'updating'};
+            else
+              return tsk;
+          })
+        })
+      }
 
       async function inserting(task){
         const response = await API.insertData(task);
-        console.log(response);
         if(response.status === 'success')
           setUpdate(true);
       }
 
       async function modifying(task){
-
         const response = await API.modifyData(task);
-        console.log(response);
         if(response.status === 'success')
           setUpdate(true);
       }
@@ -211,12 +217,18 @@ function Main(props) {
       date: currentTask.date,
       completed: res
     };
-    console.log(task);
+
+    setTasks(oldTasks => {
+      return oldTasks.map(tsk => {
+        if (tsk.id === tskID)
+          return {...tsk, status: 'updating'};
+        else
+          return tsk;
+      })
+    });
 
     async function modifying(task){
       const response = await API.modifyData(task);
-      console.log(task);
-      console.log(response);
       if(response.status === 'success')
         setUpdate(true);
     }
