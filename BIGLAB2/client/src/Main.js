@@ -116,7 +116,7 @@ function Main(props) {
     event.preventDefault();
 
     if (description.isValid && date.isValid) {
-      let id = tasks.sort((a, b) => a.id - b.id)[tasks.length - 1].id + 1;
+      let localId = tasks.sort((a, b) => a.id - b.id)[tasks.length - 1].id + 1;
       let taskDate;
 
       if (!date.value) taskDate = '';
@@ -125,7 +125,7 @@ function Main(props) {
       else taskDate = dayjs.tz(`${date.value}T${time}:00.000Z`);
 
       const task = {
-        id: editMode > 0 ? editMode : id,
+        id: editMode > 0 ? editMode : localId,
         description: description.value,
         isPrivate: isPrivate,
         isUrgent: isImportant,
@@ -135,7 +135,7 @@ function Main(props) {
 
       if(editMode === -1){
         task.status = "loading";
-        setTasks( oldTasks => [...oldTasks.filter(task => task.id !== id), task]);
+        setTasks( oldTasks => [...oldTasks.filter(task => task.id !== localId), task]);
       }
       else{
         setTasks(oldTasks => {

@@ -7,6 +7,15 @@
 .text-black {
   color: #000;
 }
+.text-completed {
+  color: #17a2b899;
+}
+.bg-muted {
+  background-color: #6c757d19;
+}
+.bg-completed {
+  background-color: #73c7d419;
+}
 .margin-b-75 {
   margin-bottom: 7.5rem;
 }
