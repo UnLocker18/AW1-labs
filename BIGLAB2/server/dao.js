@@ -199,7 +199,7 @@ exports.getUser = (username, password) =>{
       else{
         const user = {
           id: row.id,
-          username: row.email,
+          email: row.email,
           name: row.name
         };
 

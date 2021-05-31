@@ -11,9 +11,9 @@ const session = require('express-session');
 passport.use(new LocalStrategy(
   function(username, password, done){
     dao.getUser(username, password)
-    .then( user => {
+    .then( (user) => {
       if(!user) return done(null, false, { message: "Wrong username and/or password" });
-      else return done(null, user);
+      return done(null, user);
     });
   }
 ));
@@ -25,7 +25,7 @@ passport.serializeUser( (user, done) =>{
 passport.deserializeUser( (id, done) =>{
   dao.getUserById(id)
   .then(user => done(null, user))
-  .catch(err => done(null, false))
+  .catch(err => done(err, null))
 } );
 
 const app = express();
@@ -251,17 +251,13 @@ app.post('/api/login', function(req, res, next) {
     if (err)
       return next(err);
       if (!user) {
-        // display wrong login messages
         return res.status(401).json(info);
       }
-      // success, perform the login
       req.login(user, (err) => {
         if (err)
           return next(err);
-        
-        // req.user contains the authenticated user, we send all the user info back
-        // this is coming from userDao.getUser()
-        return res.json(req.user);
+
+        return res.status(200).json(req.user);
       });
   })(req, res, next);
 });
