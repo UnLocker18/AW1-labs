@@ -7,7 +7,7 @@ import { filterToUrl, jsonMapperInverse } from './utils';
 import { TaskAdder } from './AdderComponents';
 import TaskList from './TaskComponents';
 
-import { Col, Container } from 'react-bootstrap';
+import { Col, Container, Alert } from 'react-bootstrap';
 
 import { ArrowRepeat } from 'react-bootstrap-icons';
 
@@ -272,6 +272,9 @@ function Main(props) {
     )
     :
     (<Col as="main" lg={8} className="py-3">
+      {props.message.status === "success" && <Col className="text-center">
+         <Alert variant={props.message.status} onClose={() => props.setMessage('')} dismissible>{props.message.details}</Alert>
+      </Col> }
       <h1>{filterName[0] ? filterName[0].text : ''}</h1>
       <TaskList
         tasks={tasks}

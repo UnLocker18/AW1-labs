@@ -60,7 +60,7 @@ export default LoginForm; */
 import React, { useState } from 'react';
 import validator from 'validator';
 
-import { Form, Modal, Button } from 'react-bootstrap';
+import { Form, Modal, Button, Alert } from 'react-bootstrap';
 
 function LoginModal(props) {
   const [email, setEmail] = useState('');
@@ -70,7 +70,8 @@ function LoginModal(props) {
 
   const handleSubmit = e => {
     e.preventDefault();
-    const credentials = { email, password };
+    const credentials = { username: email, 
+                          password: password };
     if (validEmail && validPwd) props.logIn(credentials);
   };
 
@@ -85,6 +86,10 @@ function LoginModal(props) {
 
   return (
     <Modal show={true} backdrop="static">
+      {props.message.status === "danger" && <>
+        <Alert variant={props.message.status} onClose={() => props.setMessage('')} dismissible>{props.message.details}</Alert>
+      </>
+      }
       <Modal.Header>
         <Modal.Title>Please Log In</Modal.Title>
       </Modal.Header>

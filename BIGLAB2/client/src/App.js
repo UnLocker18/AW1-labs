@@ -45,26 +45,22 @@ function Content(props) {
       console.log(credentials);
       const user = await API.loginUser(credentials);
       setLogged(true);
-      setMessage({ status: "success", details: `Welcome ${user}` });
+      setMessage({ status: "success", details: `Welcome ${user}` });  
     }
     catch(err){
-      console.log(err);
-      setMessage({ status: "danger", details: 'login error' });
+      setMessage({ status: "danger", details: 'Wrong username and/or password' });
     }
   }
 
   return (
     <Container fluid className="d-flex flex-lg-grow-1 flex-wrap m-0 p-0">
       {logged && <Aside lg={lg} isOpen={props.isOpen} /> }
-      {message && <Row>
-         <Alert variant={message.status} onClose={() => setMessage('')} dismissible>{message.details}</Alert>
-      </Row> }
       <Switch>
         <Route
           exact
           path="/login"
           render={() =>
-            logged ? <Redirect to="/all" /> : <LoginModal logIn={loginApp} />
+            logged ? <Redirect to="/all" /> : <LoginModal logIn={loginApp} message={message} setMessage={setMessage} />
           }
         />
         <Route
@@ -72,7 +68,7 @@ function Content(props) {
           path="/:url"
           render={({ match }) =>
             logged ? (
-              <Main lg={lg} activeFilter={match.params.url} />
+              <Main lg={lg} activeFilter={match.params.url} message={message} setMessage={setMessage}/>
             ) : (
               <Redirect to="/login" />
             )

@@ -72,17 +72,22 @@ const loginUser = async (credentials) =>{
     },
     body: JSON.stringify(credentials),
   });
-  console.log('response');
   console.log(response);
 
   if(response.ok) {
     const user = await response.json();
-    console.log('user');
     console.log(user);
     return user.name;
   }
   else {
-     throw Error(response.statusText); 
+    try {
+      const errDetail = await response.json();
+      console.log(errDetail);
+      throw errDetail.message;
+    }
+    catch(err) {
+      throw err;
+    }
   }
 }
 
