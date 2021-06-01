@@ -4,12 +4,50 @@ const express = require("express");
 const morgan = require("morgan");
 const dao = require("./dao");
 const { body, validationResult, check, param } = require("express-validator");
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const session = require('express-session');
+
+passport.use(new LocalStrategy(
+  function(username, password, done){
+    dao.getUser(username, password)
+    .then( (user) => {
+      if(!user) return done(null, false, { message: "Wrong username and/or password" });
+      return done(null, user);
+    });
+  }
+));
+
+// sessioni personalizzate  utente <---> id
+passport.serializeUser( (user, done) =>{
+  done(null, user, user.id);
+});
+passport.deserializeUser( (id, done) =>{
+  dao.getUserById(id)
+  .then(user => done(null, user))
+  .catch(err => done(err, null))
+} );
 
 const app = express();
 const port = 3001;
 
 app.use(morgan("dev"));
 app.use(express.json());
+
+
+app.use(session({
+  secret: "a secret sentence not to share with anybody and anywhere, used to sign the session ID cookie",
+  resolve: false,
+  saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+const isLogged = (req, res, next) =>{
+  if(req.isAuthenticated()) return next();
+  return req.status(400).json({message: 'User is not logged'});
+};
+
 
 /******** API ********/
 
@@ -204,6 +242,25 @@ app.delete(
       );
   }
 );
+
+// app.post('/api/login', passport.authenticate('local'), (req, res) => {
+//   res.status(200).json({ status: "success", content: res.user });
+// });
+app.post('/api/login', function(req, res, next) {
+  passport.authenticate('local', (err, user, info) => {
+    if (err)
+      return next(err);
+      if (!user) {
+        return res.status(401).json(info);
+      }
+      req.login(user, (err) => {
+        if (err)
+          return next(err);
+
+        return res.status(200).json(req.user);
+      });
+  })(req, res, next);
+});
 
 app.listen(port, () =>
   console.log(`Server running on http://localhost:${port}`)

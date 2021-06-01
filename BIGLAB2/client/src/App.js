@@ -5,8 +5,10 @@ import Main from './Main';
 import FilterList from './FilterComponents';
 import MainNav from './MainNav';
 import { useViewport } from './utils';
+import LoginModal from './LoginModal'
+import API from './API'
 
-import { Container, Col, Collapse } from 'react-bootstrap';
+import { Container, Col, Collapse, Row, Alert } from 'react-bootstrap';
 
 import React, { useState } from 'react';
 import {
@@ -35,18 +37,49 @@ function Content(props) {
 
   const lg = width > breakpoint;
 
+  const [logged, setLogged] = useState(false);
+  const [message, setMessage] = useState('');
+
+  async function loginApp(credentials) {
+    try{
+      console.log(credentials);
+      const user = await API.loginUser(credentials);
+      setLogged(true);
+      setMessage({ status: "success", details: `Welcome ${user}` });  
+    }
+    catch(err){
+      setMessage({ status: "danger", details: 'Wrong username and/or password' });
+    }
+  }
+
   return (
     <Container fluid className="d-flex flex-lg-grow-1 flex-wrap m-0 p-0">
-      <Aside lg={lg} isOpen={props.isOpen} />
+      {logged && <Aside lg={lg} isOpen={props.isOpen} /> }
       <Switch>
         <Route
           exact
-          path="/:url"
-          render={({ match }) => (
-            <Main lg={lg} activeFilter={match.params.url} />
-          )}
+          path="/login"
+          render={() =>
+            logged ? <Redirect to="/all" /> : <LoginModal logIn={loginApp} message={message} setMessage={setMessage} />
+          }
         />
-        <Route path="/" render={() => <Redirect to="/all" />} />
+        <Route
+          exact
+          path="/:url"
+          render={({ match }) =>
+            logged ? (
+              <Main lg={lg} activeFilter={match.params.url} message={message} setMessage={setMessage}/>
+            ) : (
+              <Redirect to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/"
+          render={() =>
+            logged ? <Redirect to="/all" /> : <Redirect to="/login" />
+          }
+        />
       </Switch>
     </Container>
   );

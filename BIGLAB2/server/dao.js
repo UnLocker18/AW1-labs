@@ -2,6 +2,7 @@
 
 const sqlite = require("sqlite3");
 const dayjs = require("dayjs");
+const bcrypt = require("bcrypt");
 
 var isBetween = require("dayjs/plugin/isBetween");
 var isToday = require("dayjs/plugin/isToday");
@@ -185,6 +186,46 @@ exports.deleteTask = (taskID) => {
         reject(err);
         return err;
       } else resolve(this.changes);
+    });
+  });
+};
+
+exports.getUser = (username, password) =>{
+  return new Promise ( (resolve, reject) => {
+    const sql = " SELECT * FROM users WHERE email = ?";
+    db.get(sql, [username], (err, row) => {
+      if(err) reject(err);
+      else if(row===undefined) resolve(false);
+      else{
+        const user = {
+          id: row.id,
+          email: row.email,
+          name: row.name
+        };
+
+      bcrypt.compare(password, row.hash)
+      .then(result => {
+        if(result) resolve (user);
+        else resolve(false);
+      })
+      }
+    })
+  });
+}
+
+exports.getUserById = (id) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT * FROM users WHERE id = ?';
+      db.get(sql, [id], (err, row) => {
+        if (err) 
+          reject(err);
+        else if (row === undefined)
+          resolve({error: 'User not found.'});
+        else {
+          // by default, the local strategy looks for "username": not to create confusion in server.js, we can create an object with that property
+          const user = {id: row.id, username: row.email, name: row.name}
+          resolve(user);
+        }
     });
   });
 };

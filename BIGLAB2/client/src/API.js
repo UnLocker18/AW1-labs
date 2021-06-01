@@ -63,6 +63,34 @@ const deleteData = (tskID) =>{
     );
 }
 
-const API = {loadData, insertData, deleteData, loadFilteredData, modifyData};
+const loginUser = async (credentials) =>{
+
+  let response = await fetch('/api/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(credentials),
+  });
+  console.log(response);
+
+  if(response.ok) {
+    const user = await response.json();
+    console.log(user);
+    return user.name;
+  }
+  else {
+    try {
+      const errDetail = await response.json();
+      console.log(errDetail);
+      throw errDetail.message;
+    }
+    catch(err) {
+      throw err;
+    }
+  }
+}
+
+const API = {loadData, insertData, deleteData, loadFilteredData, modifyData, loginUser};
 
 export default API;
