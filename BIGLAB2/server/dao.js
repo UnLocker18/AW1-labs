@@ -15,10 +15,10 @@ const db = new sqlite.Database("tasks.db", (err) => {
 });
 
 //get all tasks
-exports.listTasks = () => {
+exports.listTasks = (userID) => {
   return new Promise((resolve, reject) => {
-    const sql = "SELECT * FROM tasks";
-    db.all(sql, (err, rows) => {
+    const sql = "SELECT * FROM tasks WHERE user = ?";
+    db.all(sql, [userID], (err, rows) => {
       if (err) {
         reject(err);
       } else {
@@ -38,10 +38,10 @@ exports.listTasks = () => {
 };
 
 //get all tasks with a filter
-exports.listFilteredTasks = (filterName) => {
+exports.listFilteredTasks = (filterName, userID) => {
   return new Promise((resolve, reject) => {
-    const sql = "SELECT * FROM tasks";
-    db.all(sql, [], (err, rows) => {
+    const sql = "SELECT * FROM tasks WHERE user = ?";
+    db.all(sql, [userID], (err, rows) => {
       if (err) {
         reject(err);
       } else {
@@ -138,7 +138,7 @@ exports.newTask = (task) => {
       "INSERT INTO tasks (description, important, private, deadline, user) VALUES(?,?,?,?,?)";
     db.run(
       query,
-      [task.description, task.important, task.private, task.deadline, 1],
+      [task.description, task.important, task.private, task.deadline, task.user],
       function (err) {
         if (err) {
           reject(err);

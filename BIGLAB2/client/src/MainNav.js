@@ -1,12 +1,8 @@
-import Navbar from 'react-bootstrap/Navbar';
-import Form from 'react-bootstrap/Form';
-import FormControl from 'react-bootstrap/FormControl';
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
+import { Navbar, Form, FormControl, Button, Container } from 'react-bootstrap';
 
-import PersonCircle from 'react-bootstrap-icons/dist/icons/person-circle';
-import Check2All from 'react-bootstrap-icons/dist/icons/check2-all';
-import List from 'react-bootstrap-icons/dist/icons/list';
+import { PersonCircle, Check2All, List, BoxArrowLeft } from 'react-bootstrap-icons';
+
+import { NavLink } from 'react-router-dom';
 
 function Toggle(props) {
     return (
@@ -31,7 +27,11 @@ function MainNav(props) {
                         <Button variant="outline-info">Search</Button>
                     </Form>
                 </Navbar.Collapse>
-                <PersonCircle color="white" size={32} />
+                {/* <PersonCircle color="white" size={32} /> */}
+                <NavLink to="/login" onClick={() => props.logOut()} className="text-white d-flex align-items-center">
+                    {/* <span>Logout</span> */}
+                    <BoxArrowLeft size={24} className="hover-white" />
+                </NavLink>
             </Container>
         </Navbar>
     );

@@ -91,6 +91,10 @@ const loginUser = async (credentials) =>{
   }
 }
 
-const API = {loadData, insertData, deleteData, loadFilteredData, modifyData, loginUser};
+async function logoutUser() {
+  await fetch('/api/login/current', { method: 'DELETE' });
+}
+
+const API = {loadData, insertData, deleteData, loadFilteredData, modifyData, loginUser, logoutUser};
 
 export default API;

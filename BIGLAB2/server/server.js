@@ -20,7 +20,7 @@ passport.use(new LocalStrategy(
 
 // sessioni personalizzate  utente <---> id
 passport.serializeUser( (user, done) =>{
-  done(null, user, user.id);
+  done(null, user.id);
 });
 passport.deserializeUser( (id, done) =>{
   dao.getUserById(id)
@@ -45,7 +45,7 @@ app.use(passport.session());
 
 const isLogged = (req, res, next) =>{
   if(req.isAuthenticated()) return next();
-  return req.status(400).json({message: 'User is not logged'});
+  return res.status(400).json({message: 'User is not logged'});
 };
 
 
@@ -54,6 +54,7 @@ const isLogged = (req, res, next) =>{
 // GET /api/tasks
 app.get(
   "/api/tasks",
+  isLogged,
   async (req, res) => {
 
 
@@ -62,7 +63,7 @@ app.get(
 
     setTimeout( async () => {
       try {
-        const tasks = await dao.listTasks();
+        const tasks = await dao.listTasks(req.user.id);
         res
           .status(200)
           .json({ status: "success", details: "api GET /tasks", content: tasks });
@@ -104,6 +105,7 @@ app.get(
 // GET /api/tasks:filter
 app.get(
   "/api/tasks/:filter",
+  isLogged,
   param("filter").isLength({ min: 3, max: 100 }),
   async (req, res) => {
     const filter = req.params.filter;
@@ -113,7 +115,7 @@ app.get(
     }
 
     try {
-      const tasks = await dao.listFilteredTasks(filter);
+      const tasks = await dao.listFilteredTasks(filter, req.user.id);
       res.status(200).json({
         status: "success",
         details: `api GET /tasks/${filter}`,
@@ -130,6 +132,7 @@ app.get(
 //POST /api/tasks
 app.post(
   "/api/tasks",
+  isLogged,
   [
     body("important").isBoolean(),
     body("private").isBoolean(),
@@ -149,6 +152,7 @@ app.post(
       important: req.body.important,
       private: req.body.private,
       deadline: req.body.deadline,
+      user: req.user.id
     };
 
     dao
@@ -170,6 +174,7 @@ app.post(
 // PUT /api/tasks/:id
 app.put(
   "/api/tasks/:id(\\d+)",
+  isLogged,
   [
     check("id")
       .isInt({ min: 0, max: 100 })
@@ -191,7 +196,7 @@ app.put(
       return res.status(422).json({ errors: errors.array() });
     }
 
-    const task = req.body;
+    const task = {...req.body, user: req.user.id};    
     dao
       .updateTask(task)
       .then((updatedTasks) => {
@@ -215,6 +220,7 @@ app.put(
 // DELETE /api/tasks/:id
 app.delete(
   "/api/tasks/:id(\\d+)",
+  isLogged,
   [param("id").isInt({ min: 0, max: 100 })],
   (req, res) => {
     const errors = validationResult(req);
@@ -260,6 +266,23 @@ app.post('/api/login', function(req, res, next) {
         return res.status(200).json(req.user);
       });
   })(req, res, next);
+});
+
+// DELETE /login/current 
+// logout
+app.delete('/api/login/current', (req, res) => {
+  console.log(req);
+  req.logout();
+  res.end();
+});
+
+// GET /sessions/current
+// check whether the user is logged in or not
+app.get('/api/login/current', (req, res) => {
+  if(req.isAuthenticated()) {
+    res.status(200).json(req.user);}
+  else
+    res.status(401).json({error: 'Unauthenticated user!'});;
 });
 
 app.listen(port, () =>
