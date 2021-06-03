@@ -116,7 +116,11 @@ function Main(props) {
     event.preventDefault();
 
     if (description.isValid && date.isValid) {
-      let localId = tasks.sort((a, b) => a.id - b.id)[tasks.length - 1].id + 1;
+      let localId;
+
+      if(tasks.length > 0) localId = tasks.sort((a, b) => a.id - b.id)[tasks.length - 1].id + 1;
+      else localId = 1;
+
       let taskDate;
 
       if (!date.value) taskDate = '';

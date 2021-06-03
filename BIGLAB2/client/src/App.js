@@ -21,22 +21,6 @@ import {
 function App() {
   const [open, setOpen] = useState(true);
 
-  return (
-    <Router>
-      <Container fluid className="d-flex flex-column height-100 m-0 p-0">
-        <MainNav toggleCollapse={isOpen => setOpen(isOpen)} />
-        <Content isOpen={open} />
-      </Container>
-    </Router>
-  );
-}
-
-function Content(props) {
-  const { width } = useViewport();
-  const breakpoint = 992;
-
-  const lg = width > breakpoint;
-
   const [logged, setLogged] = useState(false);
   const [message, setMessage] = useState('');
 
@@ -52,23 +36,51 @@ function Content(props) {
     }
   }
 
+  async function logoutApp() {
+    await API.logoutUser();
+    setLogged(false);
+  }
+
+  return (
+    <Router>
+      <Container fluid className="d-flex flex-column height-100 m-0 p-0">
+        <MainNav logOut={logoutApp} toggleCollapse={isOpen => setOpen(isOpen)} />
+        <Content logged={logged} setLogged={setLogged} 
+          message={message} setMessage={setMessage} 
+          loginApp={loginApp} isOpen={open}        
+        />
+      </Container>
+    </Router>
+  );
+}
+
+function Content(props) {
+  const { width } = useViewport();
+  const breakpoint = 992;
+
+  const lg = width > breakpoint;
+
   return (
     <Container fluid className="d-flex flex-lg-grow-1 flex-wrap m-0 p-0">
-      {logged && <Aside lg={lg} isOpen={props.isOpen} /> }
+      {props.logged && <Aside lg={lg} isOpen={props.isOpen} /> }
       <Switch>
         <Route
           exact
           path="/login"
           render={() =>
-            logged ? <Redirect to="/all" /> : <LoginModal logIn={loginApp} message={message} setMessage={setMessage} />
+            props.logged ? (
+              <Redirect to="/all" /> 
+            ) : ( 
+              <LoginModal logIn={props.loginApp} logOut={props.logoutApp} message={props.message} setMessage={props.setMessage} />
+            )
           }
         />
         <Route
           exact
           path="/:url"
           render={({ match }) =>
-            logged ? (
-              <Main lg={lg} activeFilter={match.params.url} message={message} setMessage={setMessage}/>
+            props.logged ? (
+              <Main lg={lg} activeFilter={match.params.url} message={props.message} setMessage={props.setMessage} />
             ) : (
               <Redirect to="/login" />
             )
@@ -77,7 +89,7 @@ function Content(props) {
         <Route
           path="/"
           render={() =>
-            logged ? <Redirect to="/all" /> : <Redirect to="/login" />
+            props.logged ? <Redirect to="/all" /> : <Redirect to="/login" />
           }
         />
       </Switch>

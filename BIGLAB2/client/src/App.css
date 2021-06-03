@@ -35,6 +35,12 @@ span > .max-width-5 {
 .hover-bg-light:hover {
   background-color: #17a2b808;
 }
+.hover-white {
+  color: #ffffffd0;
+}
+.hover-white:hover {
+  color: #ffffffff !important;
+}
 .hover-scaleup {
   transition: all .15s ease-in-out;
 }
