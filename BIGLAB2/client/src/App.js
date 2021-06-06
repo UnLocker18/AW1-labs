@@ -5,12 +5,12 @@ import Main from './Main';
 import FilterList from './FilterComponents';
 import MainNav from './MainNav';
 import { useViewport } from './utils';
-import LoginModal from './LoginModal'
-import API from './API'
+import LoginModal from './LoginModal';
+import API from './API';
 
-import { Container, Col, Collapse, Row, Alert } from 'react-bootstrap';
+import { Container, Col, Collapse } from 'react-bootstrap';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   BrowserRouter as Router,
   Route,
@@ -22,17 +22,29 @@ function App() {
   const [open, setOpen] = useState(true);
 
   const [logged, setLogged] = useState(false);
+  const [justLogged, setJustLogged] = useState(false);
   const [message, setMessage] = useState('');
 
+  useEffect(() => {
+    const checkAuth = async () => {
+      API.isUserLogged().then(user => {
+        if (user) setLogged(true);
+      });
+    };
+    checkAuth();
+  }, []);
+
   async function loginApp(credentials) {
-    try{
-      console.log(credentials);
-      const user = await API.loginUser(credentials);
+    try {
+      const username = await API.loginUser(credentials);
       setLogged(true);
-      setMessage({ status: "success", details: `Welcome ${user}` });  
-    }
-    catch(err){
-      setMessage({ status: "danger", details: 'Wrong username and/or password' });
+      setJustLogged(true);
+      setMessage({ status: 'success', details: `Welcome ${username}` });
+    } catch (err) {
+      setMessage({
+        status: 'danger',
+        details: 'Wrong username and/or password',
+      });
     }
   }
 
@@ -44,10 +56,18 @@ function App() {
   return (
     <Router>
       <Container fluid className="d-flex flex-column height-100 m-0 p-0">
-        <MainNav logOut={logoutApp} toggleCollapse={isOpen => setOpen(isOpen)} />
-        <Content logged={logged} setLogged={setLogged} 
-          message={message} setMessage={setMessage} 
-          loginApp={loginApp} isOpen={open}        
+        <MainNav
+          logOut={logoutApp}
+          toggleCollapse={isOpen => setOpen(isOpen)}
+        />
+
+        <Content
+          logged={logged}
+          justLogged={justLogged}
+          setJustLogged={setJustLogged}
+          message={message}
+          loginApp={loginApp}
+          isOpen={open}
         />
       </Container>
     </Router>
@@ -62,16 +82,21 @@ function Content(props) {
 
   return (
     <Container fluid className="d-flex flex-lg-grow-1 flex-wrap m-0 p-0">
-      {props.logged && <Aside lg={lg} isOpen={props.isOpen} /> }
+      {props.logged && <Aside lg={lg} isOpen={props.isOpen} />}
       <Switch>
         <Route
           exact
           path="/login"
           render={() =>
             props.logged ? (
-              <Redirect to="/all" /> 
-            ) : ( 
-              <LoginModal logIn={props.loginApp} logOut={props.logoutApp} message={props.message} setMessage={props.setMessage} />
+              <Redirect to="/all" />
+            ) : (
+              <LoginModal
+                logIn={props.loginApp}
+                logOut={props.logoutApp}
+                message={props.message}
+                setMessage={props.setMessage}
+              />
             )
           }
         />
@@ -80,7 +105,14 @@ function Content(props) {
           path="/:url"
           render={({ match }) =>
             props.logged ? (
-              <Main lg={lg} activeFilter={match.params.url} message={props.message} setMessage={props.setMessage} />
+              <Main
+                lg={lg}
+                selectedFilter={match.params.url}
+                message={props.message}
+                logged={props.logged}
+                justLogged={props.justLogged}
+                setJustLogged={props.setJustLogged}
+              />
             ) : (
               <Redirect to="/login" />
             )

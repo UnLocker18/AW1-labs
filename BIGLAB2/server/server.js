@@ -4,29 +4,30 @@ const express = require("express");
 const morgan = require("morgan");
 const dao = require("./dao");
 const { body, validationResult, check, param } = require("express-validator");
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-const session = require('express-session');
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+const session = require("express-session");
 
-passport.use(new LocalStrategy(
-  function(username, password, done){
-    dao.getUser(username, password)
-    .then( (user) => {
-      if(!user) return done(null, false, { message: "Wrong username and/or password" });
+passport.use(
+  new LocalStrategy(function (username, password, done) {
+    dao.getUser(username, password).then((user) => {
+      if (!user)
+        return done(null, false, { message: "Wrong username and/or password" });
       return done(null, user);
     });
-  }
-));
+  })
+);
 
 // sessioni personalizzate  utente <---> id
-passport.serializeUser( (user, done) =>{
+passport.serializeUser((user, done) => {
   done(null, user.id);
 });
-passport.deserializeUser( (id, done) =>{
-  dao.getUserById(id)
-  .then(user => done(null, user))
-  .catch(err => done(err, null))
-} );
+passport.deserializeUser((id, done) => {
+  dao
+    .getUserById(id)
+    .then((user) => done(null, user))
+    .catch((err) => done(err, null));
+});
 
 const app = express();
 const port = 3001;
@@ -34,47 +35,37 @@ const port = 3001;
 app.use(morgan("dev"));
 app.use(express.json());
 
-
-app.use(session({
-  secret: "a secret sentence not to share with anybody and anywhere, used to sign the session ID cookie",
-  resolve: false,
-  saveUninitialized: false
-}));
+app.use(
+  session({
+    secret:
+      "a secret sentence not to share with anybody and anywhere, used to sign the session ID cookie",
+    resolve: false,
+    saveUninitialized: false,
+  })
+);
 app.use(passport.initialize());
 app.use(passport.session());
 
-const isLogged = (req, res, next) =>{
-  if(req.isAuthenticated()) return next();
-  return res.status(400).json({message: 'User is not logged'});
+const isLogged = (req, res, next) => {
+  if (req.isAuthenticated()) return next();
+  return res.status(400).json({ message: "User is not logged" });
 };
-
 
 /******** API ********/
 
 // GET /api/tasks
-app.get(
-  "/api/tasks",
-  isLogged,
-  async (req, res) => {
-
-
-    //TOGLIERE setTimeout
-
-
-    setTimeout( async () => {
-      try {
-        const tasks = await dao.listTasks(req.user.id);
-        res
-          .status(200)
-          .json({ status: "success", details: "api GET /tasks", content: tasks });
-      } catch {
-        res
-          .status(500)
-          .json({ status: "failure", details: `Database Error ${err}` });
-      }
-    }, 2000);    
+app.get("/api/tasks", isLogged, async (req, res) => {
+  try {
+    const tasks = await dao.listTasks(req.user.id);
+    res
+      .status(200)
+      .json({ status: "success", details: "api GET /tasks", content: tasks });
+  } catch {
+    res
+      .status(500)
+      .json({ status: "failure", details: `Database Error ${err}` });
   }
-);
+});
 
 // GET /api/tasks/:id
 app.get(
@@ -152,7 +143,7 @@ app.post(
       important: req.body.important,
       private: req.body.private,
       deadline: req.body.deadline,
-      user: req.user.id
+      user: req.user.id,
     };
 
     dao
@@ -196,7 +187,7 @@ app.put(
       return res.status(422).json({ errors: errors.array() });
     }
 
-    const task = {...req.body, user: req.user.id};    
+    const task = { ...req.body, user: req.user.id };
     dao
       .updateTask(task)
       .then((updatedTasks) => {
@@ -249,40 +240,33 @@ app.delete(
   }
 );
 
-// app.post('/api/login', passport.authenticate('local'), (req, res) => {
-//   res.status(200).json({ status: "success", content: res.user });
-// });
-app.post('/api/login', function(req, res, next) {
-  passport.authenticate('local', (err, user, info) => {
-    if (err)
-      return next(err);
-      if (!user) {
-        return res.status(401).json(info);
-      }
-      req.login(user, (err) => {
-        if (err)
-          return next(err);
+// POST /api/login
+app.post("/api/login", function (req, res, next) {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) return next(err);
+    if (!user) {
+      return res.status(401).json(info);
+    }
+    req.login(user, (err) => {
+      if (err) return next(err);
 
-        return res.status(200).json(req.user);
-      });
+      return res.status(200).json(req.user);
+    });
   })(req, res, next);
 });
 
-// DELETE /login/current 
-// logout
-app.delete('/api/login/current', (req, res) => {
+// DELETE /api/login/current
+app.delete("/api/login/current", (req, res) => {
   console.log(req);
   req.logout();
   res.end();
 });
 
-// GET /sessions/current
-// check whether the user is logged in or not
-app.get('/api/login/current', (req, res) => {
-  if(req.isAuthenticated()) {
-    res.status(200).json(req.user);}
-  else
-    res.status(401).json({error: 'Unauthenticated user!'});;
+// GET /api//login/current
+app.get("/api/login/current", (req, res) => {
+  if (req.isAuthenticated()) {
+    res.status(200).json(req.user);
+  } else res.status(401).json({ error: "Authentication required" });
 });
 
 app.listen(port, () =>
