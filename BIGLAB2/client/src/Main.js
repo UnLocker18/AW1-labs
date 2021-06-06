@@ -21,18 +21,24 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.tz.setDefault(dayjs.tz.guess());
 
-function Main(props) {
+function Main({ ...props }) {
+  const { lg, selectedFilter, message, logged, justLogged, setJustLogged } =
+    props;
   const [tasks, setTasks] = useState([]);
   const [update, setUpdate] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [activeFilter, setActiveFilter] = useState(props.activeFilter);
+  const [activeFilter, setActiveFilter] = useState(selectedFilter);
 
-  useEffect( () => {
-    async function loading() {  
-      if(filterName.length===0) return <Redirect to="/all" />;
-      
+  const filterName = filters.filter(
+    filter => filterToUrl(filter.text) === selectedFilter
+  );
+
+  useEffect(() => {
+    async function loading() {
+      if (filterName.length === 0) return <Redirect to="/all" />;
+
       let filter = filterName[0].text;
-      if(filter === "Next 7 Days") filter = "next_7_days";
+      if (filter === 'Next 7 Days') filter = 'next_7_days';
 
       const data = await API.loadFilteredData(filter.toLowerCase());
       setTasks(data);
@@ -40,17 +46,23 @@ function Main(props) {
       setLoading(false);
     }
 
-    if(update)
-     loading();
-    else{
-      if(props.activeFilter !== activeFilter){
-        setActiveFilter(props.activeFilter);
+    if (update) loading();
+    else {
+      if (selectedFilter !== activeFilter) {
+        setActiveFilter(selectedFilter);
         loading();
       }
     }
+  }, [update, selectedFilter, activeFilter, filterName]);
 
-  }, [update, props.activeFilter] );
+  useEffect(() => {
+    const time = setTimeout(() => setJustLogged(false), 5000);
+    return function cleanup() {
+      clearTimeout(time);
+    };
+  }, [justLogged, setJustLogged]);
 
+  /***********  Form States ***********/
   const [editMode, setEditMode] = useState(-1);
 
   const [show, setShow] = useState(false);
@@ -65,16 +77,14 @@ function Main(props) {
   const deleteTask = tskID => {
     setTasks(oldTasks => {
       return oldTasks.map(tsk => {
-        if (tsk.id === tskID)
-          return {...tsk, status: 'deleting'};
-        else
-          return tsk;
+        if (tsk.id === tskID) return { ...tsk, status: 'deleting' };
+        else return tsk;
       });
     });
 
     async function deleting(id) {
       const response = await API.deleteData(id);
-      if(response.status === 'success') setUpdate(true);
+      if (response.status === 'success') setUpdate(true);
     }
     deleting(tskID);
   };
@@ -118,7 +128,8 @@ function Main(props) {
     if (description.isValid && date.isValid) {
       let localId;
 
-      if(tasks.length > 0) localId = tasks.sort((a, b) => a.id - b.id)[tasks.length - 1].id + 1;
+      if (tasks.length > 0)
+        localId = tasks.sort((a, b) => a.id - b.id)[tasks.length - 1].id + 1;
       else localId = 1;
 
       let taskDate;
@@ -134,37 +145,35 @@ function Main(props) {
         isPrivate: isPrivate,
         isUrgent: isImportant,
         date: taskDate,
-        completed: completed
+        completed: completed,
       };
 
-      if(editMode === -1){
-        task.status = "loading";
-        setTasks( oldTasks => [...oldTasks.filter(task => task.id !== localId), task]);
-      }
-      else{
+      if (editMode === -1) {
+        task.status = 'loading';
+        setTasks(oldTasks => [
+          ...oldTasks.filter(task => task.id !== localId),
+          task,
+        ]);
+      } else {
         setTasks(oldTasks => {
           return oldTasks.map(tsk => {
-            if (tsk.id === editMode)
-              return {...tsk, status: 'updating'};
-            else
-              return tsk;
-          })
-        })
+            if (tsk.id === editMode) return { ...tsk, status: 'updating' };
+            else return tsk;
+          });
+        });
       }
 
-      async function inserting(task){
+      async function inserting(task) {
         const response = await API.insertData(task);
-        if(response.status === 'success')
-          setUpdate(true);
+        if (response.status === 'success') setUpdate(true);
       }
 
-      async function modifying(task){
+      async function modifying(task) {
         const response = await API.modifyData(task);
-        if(response.status === 'success')
-          setUpdate(true);
+        if (response.status === 'success') setUpdate(true);
       }
-      
-      if(editMode > 0) modifying(jsonMapperInverse(task));
+
+      if (editMode > 0) modifying(jsonMapperInverse(task));
       else inserting(jsonMapperInverse(task));
 
       handleClose();
@@ -209,7 +218,7 @@ function Main(props) {
     setTime('00:00');
   };
 
-  const completeTask = (res, tskID) =>{
+  const completeTask = (res, tskID) => {
     setCompleted(res);
     const currentTask = tasks.find(task => task.id === tskID);
 
@@ -219,30 +228,26 @@ function Main(props) {
       isPrivate: currentTask.isPrivate,
       isUrgent: currentTask.isUrgent,
       date: currentTask.date,
-      completed: res
+      completed: res,
     };
 
     setTasks(oldTasks => {
       return oldTasks.map(tsk => {
-        if (tsk.id === tskID)
-          return {...tsk, status: 'updating'};
-        else
-          return tsk;
-      })
+        if (tsk.id === tskID) return { ...tsk, status: 'updating' };
+        else return tsk;
+      });
     });
 
-    async function modifying(task){
+    async function modifying(task) {
       const response = await API.modifyData(task);
-      if(response.status === 'success')
-        setUpdate(true);
+      if (response.status === 'success') setUpdate(true);
     }
 
     modifying(jsonMapperInverse(task));
-  }
-
+  };
 
   const formProps = {
-    lg: props.lg,
+    lg: lg,
     editMode,
     editTask,
     description,
@@ -262,28 +267,28 @@ function Main(props) {
     handleTimeChange,
   };
 
-  const filterName = filters.filter(
-    filter => filterToUrl(filter.text) === props.activeFilter
-  );
-
-  return (
-    loading ? 
-    (
-      <Col as="main" lg={8} className="py-5 text-center">
-        <ArrowRepeat size={32} className="loading-animation mr-3" />
-        <span >Loading data from database server</span>
-      </Col>
-    )
-    :
-    (<Col as="main" lg={8} className="py-3">
-      {props.message.status === "success" && <Col className="text-center">
-         <Alert variant={props.message.status} onClose={() => props.setMessage('')} dismissible>{props.message.details}</Alert>
-      </Col> }
+  return loading ? (
+    <Col as="main" lg={8} className="py-5 text-center">
+      <ArrowRepeat size={32} className="loading-animation mr-3" />
+      <span>Loading data from database server</span>
+    </Col>
+  ) : (
+    <Col as="main" lg={8} className="py-3">
+      {logged && justLogged && (
+        <Alert
+          variant="success"
+          onClose={() => setJustLogged(false)}
+          className="d-flex justify-content-center"
+          dismissible
+        >
+          <span>{message.details}</span>
+        </Alert>
+      )}
       <h1>{filterName[0] ? filterName[0].text : ''}</h1>
       <TaskList
         tasks={tasks}
         deleteTask={deleteTask}
-        activeFilter={props.activeFilter}
+        activeFilter={activeFilter}
         {...formProps}
       />
       <Container
@@ -298,7 +303,7 @@ function Main(props) {
           {...formProps}
         />
       </Container>
-    </Col>)
+    </Col>
   );
 }
 
